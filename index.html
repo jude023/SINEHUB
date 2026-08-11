@@ -991,7 +991,6 @@ function checkVIPStatus() {
   if (vipData && vipData.isVip) {
     const now = new Date().getTime();
     
-    // Check if permanent admin pass
     if (vipData.isPermanent || vipData.expiry === null) {
       if (container) {
         container.innerHTML = `<span class="vip-badge-active">★ VIP (Permanent)</span>`;
@@ -1002,7 +1001,6 @@ function checkVIPStatus() {
       return;
     }
 
-    // Check if key is still active
     if (now < vipData.expiry) {
       const msLeft = vipData.expiry - now;
       const hoursLeft = Math.ceil(msLeft / (1000 * 60 * 60));
@@ -1206,30 +1204,39 @@ function renderContinueWatching() {
   }
 }
 
-/* ================= CATALOG FILTERING & SORTING ================= */
+/* ================= CATALOG FILTERING (FIXED) ================= */
 async function handleCatalogFilter() {
   const genre = document.getElementById('genreSelect').value;
   const year = document.getElementById('yearSelect').value;
 
+  // Kapag pinalitan ang dropdown nang walang piniling genre o year, ibalik sa default view
   if (!genre && !year) {
-    if (currentActiveType === 'all') resetView();
-    else applyFilter(currentActiveType);
+    resetView();
     return;
   }
 
   showToast('Filtering Catalog...');
 
+  // Tukuyin kung ano ang isu-search: movie o tv (anime/series)
   let mediaType = 'movie';
-  if (currentActiveType === 'series' || currentActiveType === 'anime') mediaType = 'tv';
+  if (currentActiveType === 'series' || currentActiveType === 'anime') {
+    mediaType = 'tv';
+  }
 
-  // Default sorting na lang sa popularity.desc
   let url = `https://api.themoviedb.org/3/discover/${mediaType}?api_key=${TMDB_API_KEY}&sort_by=popularity.desc`;
 
-  if (genre) url += `&with_genres=${genre}`;
-  if (year) {
-    if (mediaType === 'movie') url += `&primary_release_year=${year}`;
-    else url += `&first_air_date_year=${year}`;
+  if (genre) {
+    url += `&with_genres=${genre}`;
   }
+  
+  if (year) {
+    if (mediaType === 'movie') {
+      url += `&primary_release_year=${year}`;
+    } else {
+      url += `&first_air_date_year=${year}`;
+    }
+  }
+
   if (currentActiveType === 'anime') {
     url += `&with_genres=16&with_original_language=ja`;
   }
@@ -1239,20 +1246,24 @@ async function handleCatalogFilter() {
     const data = await res.json();
 
     if (data.results && data.results.length > 0) {
-      const filteredResults = data.results.map(item => transformTMDB(item, currentActiveType === 'all' ? 'movie' : currentActiveType));
+      const categoryType = currentActiveType === 'all' ? 'movie' : currentActiveType;
+      const filteredResults = data.results.map(item => transformTMDB(item, categoryType));
 
       TITLES.push(...filteredResults);
       updateByIdMap();
 
-      document.querySelectorAll('.row-block').forEach((rb, i) => { 
-        rb.style.display = (i === 0 || rb.id === 'sec-continue') ? 'block' : 'none'; 
-      });
+      // I-hide muna ang lahat ng sections para malinis ang pagkakadisplay ng grid
+      document.getElementById('sec-trending').style.display = 'block';
+      document.getElementById('sec-anime').style.display = 'none';
+      document.getElementById('sec-movies').style.display = 'none';
+      document.getElementById('sec-series').style.display = 'none';
+      document.getElementById('load-trending').style.display = 'none';
 
       const genreText = genre ? document.getElementById('genreSelect').options[document.getElementById('genreSelect').selectedIndex].text : '';
       const yearText = year ? `Year ${year}` : '';
 
       document.getElementById('title-trending').textContent = `Catalog: ${genreText} ${yearText}`.trim();
-      document.getElementById('tag-trending').textContent = `${filteredResults.length} Titles`;
+      document.getElementById('tag-trending').textContent = `${filteredResults.length} Results`;
 
       const rowTrending = document.getElementById('row-trending');
       rowTrending.classList.add('grid-mode');
@@ -1260,16 +1271,20 @@ async function handleCatalogFilter() {
       renderRow('row-trending', filteredResults, false);
       document.getElementById('backBtn').style.display = 'inline-block';
     } else {
+      document.getElementById('sec-trending').style.display = 'block';
+      document.getElementById('sec-anime').style.display = 'none';
+      document.getElementById('sec-movies').style.display = 'none';
+      document.getElementById('sec-series').style.display = 'none';
+      document.getElementById('load-trending').style.display = 'none';
+
       renderRow('row-trending', [], false);
       document.getElementById('title-trending').textContent = `No Catalog Match Found`;
+      document.getElementById('tag-trending').textContent = `0 Results`;
+      document.getElementById('backBtn').style.display = 'inline-block';
     }
   } catch (err) {
     console.error('Catalog Filter Error:', err);
   }
-}
-
-function handleSortChange() {
-  handleCatalogFilter();
 }
 
 /* ================= MODAL, SHARE & RATING ================= */
@@ -1312,7 +1327,6 @@ async function openModalById(id){
         <span class="chip">${t.type.toUpperCase()}</span>
       </div>
 
-      <!-- INTERACTIVE RATING -->
       <div class="rating-box">
         <span style="font-size:13px; font-weight:700;">Rate this:</span>
         <div class="star-group" id="starGroup">
@@ -1359,7 +1373,6 @@ async function openModalById(id){
   }
 }
 
-/* RATING SYSTEM HELPERS */
 function getSavedRating(id) {
   const ratings = JSON.parse(localStorage.getItem("sinehub_ratings") || "{}");
   return ratings[id] || { stars: 0, vote: null };
@@ -1481,7 +1494,7 @@ function showToast(msg){
   toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
 }
 
-/* ================= STREAMING PLAYER SETUP & SUBTITLE HELP ================= */
+/* ================= STREAMING PLAYER SETUP ================= */
 function openPlayer(id, season = 1, episode = 1, totalEpInSeason = 24){
   const t = byId[id];
   if(!t) return;
@@ -1698,7 +1711,7 @@ function transformTMDB(item, category, isTrending = false) {
   };
 }
 
-/* ================= LOAD MORE & PAGINATION INDICATOR ================= */
+/* ================= LOAD MORE & PAGINATION ================= */
 async function loadMore(category) {
   currentPages[category]++;
   const page = currentPages[category];
@@ -1771,6 +1784,7 @@ function resetView() {
     if (rowEl) rowEl.classList.remove('grid-mode');
   });
 
+  document.getElementById('load-trending').style.display = 'flex';
   document.getElementById('title-trending').textContent = 'Trending Now';
   document.getElementById('tag-trending').textContent = 'Top 10';
 
@@ -1797,6 +1811,11 @@ document.querySelectorAll('.pill, .nav-links a[data-filter]').forEach(btn => {
     const f = btn.dataset.filter;
     document.querySelectorAll('.pill').forEach(p => p.classList.toggle('active', p.dataset.filter === f));
     currentActiveType = f;
+    
+    // I-reset ang genre at year kapag nagpalit ng tab
+    document.getElementById('genreSelect').value = '';
+    document.getElementById('yearSelect').value = '';
+    
     applyFilter(f);
   });
 });
