@@ -71,9 +71,50 @@
   }
   .nav-links li a.active{color:var(--ink);font-weight:700;}
   .nav-links li a:hover{color:var(--ink);}
-  .nav-right{display:flex;align-items:center;gap:20px;}
-  .search-wrap{display:flex;align-items:center;background:rgba(255,255,255,0.06);border:1px solid var(--line);border-radius:20px;padding:8px 14px;gap:8px;width:230px;transition:border-color .2s, width .2s;}
-  .search-wrap:focus-within{border-color:var(--ember);width:270px;}
+  .nav-right{display:flex;align-items:center;gap:15px;}
+  
+  /* VIP Section Styling */
+  .vip-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--gold);
+    border-radius: 20px;
+    padding: 4px 10px;
+  }
+  .vip-wrap input {
+    background: none;
+    border: none;
+    color: var(--ink);
+    font-size: 12px;
+    width: 110px;
+    outline: none;
+  }
+  .vip-wrap button {
+    background: var(--gold);
+    color: #111;
+    font-weight: 800;
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: opacity .2s;
+  }
+  .vip-wrap button:hover { opacity: 0.85; }
+  .vip-badge-active {
+    background: linear-gradient(135deg, var(--gold), #ff8800);
+    color: #000;
+    font-weight: 800;
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 0 10px rgba(243, 179, 61, 0.4);
+  }
+
+  .search-wrap{display:flex;align-items:center;background:rgba(255,255,255,0.06);border:1px solid var(--line);border-radius:20px;padding:8px 14px;gap:8px;width:210px;transition:border-color .2s, width .2s;}
+  .search-wrap:focus-within{border-color:var(--ember);width:250px;}
   .search-wrap svg{width:15px;height:15px;flex-shrink:0;opacity:.6;}
   .search-wrap input{background:none;border:none;color:var(--ink);font-size:13.5px;width:100%;}
   .search-wrap input::placeholder{color:var(--ink-faint);}
@@ -468,7 +509,7 @@
   @media (max-width:900px){
     .navbar{padding:14px 20px;}
     .nav-links{display:none;}
-    .search-wrap{width:150px;}
+    .search-wrap{width:140px;}
     .hero-content, .row-block, .filter-bar{padding-left:20px;padding-right:20px;}
     .hero-content{max-width:100%;}
     .footer-grid{grid-template-columns:repeat(2,1fr);}
@@ -498,6 +539,14 @@
     </ul>
   </div>
   <div class="nav-right">
+    <!-- VIP Pass Section -->
+    <div id="vip-container">
+      <div class="vip-wrap">
+        <input type="text" id="vipKeyInput" placeholder="VIP Key..." />
+        <button onclick="activateVIP()">ACTIVATE</button>
+      </div>
+    </div>
+
     <div class="search-wrap">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input type="text" id="searchInput" placeholder="Maghanap ng titulo, genre...">
@@ -530,14 +579,6 @@
   </div>
 </header>
 
-<!-- Smartlink Backup Server Button -->
-<!-- <div style="text-align: center; margin: 15px 0;">
-  <a href="https://www.effectivecpmnetwork.com/hkmtazmppa?key=1efd4e121434939adc8b77af2ce412b7" 
-     target="_blank" 
-     style="background-color: #e50914; color: #ffffff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
-     🎬 Watch in Fast Server / HD Download
-  </a>
-</div> -->
 <main class="rows">
 
   <div class="filter-bar" id="filterBar">
@@ -622,7 +663,7 @@
       <a href="#">Terms of Use</a>
     </div>
   </div>
-  <p class="fine">SINEHUB <span class="version-badge">v1.3.0</span> — Showcase web portal. Ang streaming API ay para lamang sa pananaliksik at demonstrasyon.</p>
+  <p class="fine">SINEHUB <span class="version-badge">v1.3.2</span> — Showcase web portal. Ang streaming API ay para lamang sa pananaliksik at demonstrasyon.</p>
 </footer>
 
 <!-- MODAL OVERLAY -->
@@ -656,6 +697,72 @@
 <div class="toast" id="toast"></div>
 
 <script>
+/* ================= VIP SYSTEM LOGIC ================= */
+const VALID_VIP_KEYS = [
+      "SINEHUBVIP2026",
+      "VIP-USER-100",
+      "SINEHUB-PROMO2026",
+      "ADMIN-KEY-888"
+];
+
+function checkVIPStatus() {
+  const isVIP = localStorage.getItem("sinehub_vip_user");
+  const container = document.getElementById("vip-container");
+  const adBlock = document.getElementById("adsterra-banner-container");
+
+  if (isVIP === "true") {
+    if (container) {
+      container.innerHTML = `<span class="vip-badge-active">★ VIP MEMBER</span>`;
+    }
+    if (adBlock) {
+      adBlock.style.display = "none";
+    }
+    removeAdsterraScripts();
+  }
+}
+
+function activateVIP() {
+  const input = document.getElementById("vipKeyInput");
+  if (!input) return;
+
+  const userKey = input.value.trim().toUpperCase(); // Naka-upper case para hindi maging sensitive sa malaki/maliit na letra
+
+  // Titignan kung kasama ang in-input na key sa ating Array ng valid keys
+  if (VALID_VIP_KEYS.includes(userKey)) {
+    localStorage.setItem("sinehub_vip_user", "true");
+    showToast("VIP Successfully Activated! Ads disabled.");
+    checkVIPStatus();
+  } else {
+    showToast("Maling VIP Key! Paki-subukan ulit.");
+  }
+}
+// function activateVIP() {
+//   const input = document.getElementById("vipKeyInput");
+//   if (!input) return;
+
+//   const userKey = input.value.trim();
+//   if (userKey === VALID_VIP_KEY) {
+//     localStorage.setItem("sinehub_vip_user", "true");
+//     showToast("VIP Successfully Activated! Ads disabled.");
+//     checkVIPStatus();
+//   } else {
+//     showToast("Maling VIP Key! Paki-subukan ulit.");
+//   }
+// }
+
+function removeAdsterraScripts() {
+  const scripts = document.querySelectorAll("script");
+  scripts.forEach(script => {
+    if (script.src && (script.src.includes("pvnnr.com") || script.src.includes("effectivecpmnetwork.com"))) {
+      script.remove();
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  checkVIPStatus();
+});
+
 const TMDB_API_KEY = '847d91d3590d1c54d627043a35cd1a84';
 const IMAGE_BASE = 'https://image.tmdb.org/t/p/w500';
 const BACKDROP_BASE = 'https://image.tmdb.org/t/p/original';
@@ -1184,25 +1291,34 @@ window.addEventListener('scroll', () => {
 
 fetchAllData();
 </script>
-  <script src="https://pl30791855.effectivecpmnetwork.com/3f/ea/af/3feaafce0073904a81164f7dea258294.js"></script>
-  
-  <!-- <script>
-  (function() {
-    let smartlinkOpened = false;
-    const SMARTLINK_URL = "https://www.effectivecpmnetwork.com/hkmtazmppa?key=1efd4e121434939adc8b77af2ce412b7";
 
-    document.addEventListener('click', function(e) {
-      if (!smartlinkOpened) {
-        window.open(SMARTLINK_URL, '_blank');
-        smartlinkOpened = true;
-      }
-    }, { once: true });
-  })();
-</script> -->
+  <!-- Adsterra Popunder Script -->
+  <script type="text/javascript">
+    if (localStorage.getItem("sinehub_vip_user") !== "true") {
+      let script1 = document.createElement('script');
+      script1.src = "//pl25881423.pvnnr.com/6c/be/81/6cbe81f9b360b093375b4dbb6b15e478.js";
+      document.body.appendChild(script1);
+
+      let script2 = document.createElement('script');
+      script2.src = "https://pl30791855.effectivecpmnetwork.com/3f/ea/af/3feaafce0073904a81164f7dea258294.js";
+      document.body.appendChild(script2);
+    }
+  </script>
+
   <!-- Native Banner Adsterra -->
-<div style="text-align: center; margin: 15px 0;">
-  <script async="async" data-cfasync="false" src="https://pl30793941.effectivecpmnetwork.com/e5de4f822ecb95bc3718b0887118fc7c/invoke.js"></script>
-  <div id="container-e5de4f822ecb95bc3718b0887118fc7c"></div>
-</div>
+  <div id="adsterra-banner-container" style="text-align: center; margin: 15px 0;">
+    <script type="text/javascript">
+      if (localStorage.getItem("sinehub_vip_user") !== "true") {
+        let bannerScript = document.createElement('script');
+        bannerScript.async = true;
+        bannerScript.dataset.cfasync = "false";
+        bannerScript.src = "https://pl30793941.effectivecpmnetwork.com/e5de4f822ecb95bc3718b0887118fc7c/invoke.js";
+        document.body.appendChild(bannerScript);
+      } else {
+        document.getElementById("adsterra-banner-container").style.display = "none";
+      }
+    </script>
+    <div id="container-e5de4f822ecb95bc3718b0887118fc7c"></div>
+  </div>
 </body>
 </html>
