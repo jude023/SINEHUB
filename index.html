@@ -106,18 +106,56 @@
     background: linear-gradient(135deg, var(--gold), #ff8800);
     color: #000;
     font-weight: 800;
-    font-size: 12px;
+    font-size: 11.5px;
     padding: 5px 12px;
     border-radius: 20px;
     letter-spacing: 0.5px;
     box-shadow: 0 0 10px rgba(243, 179, 61, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 6px;
   }
 
+  /* SEARCH CONTAINER & DROPDOWN */
+  .search-container {
+    position: relative;
+  }
   .search-wrap{display:flex;align-items:center;background:rgba(255,255,255,0.06);border:1px solid var(--line);border-radius:20px;padding:8px 14px;gap:8px;width:210px;transition:border-color .2s, width .2s;}
   .search-wrap:focus-within{border-color:var(--ember);width:250px;}
   .search-wrap svg{width:15px;height:15px;flex-shrink:0;opacity:.6;}
   .search-wrap input{background:none;border:none;color:var(--ink);font-size:13.5px;width:100%;}
   .search-wrap input::placeholder{color:var(--ink-faint);}
+  
+  .search-dropdown {
+    position: absolute;
+    top: 45px;
+    left: 0;
+    right: 0;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    max-height: 320px;
+    overflow-y: auto;
+    z-index: 300;
+    display: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  }
+  .search-dropdown.open { display: block; }
+  .search-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    transition: background 0.2s;
+  }
+  .search-item:hover { background: rgba(255,255,255,0.08); }
+  .search-item img { width: 36px; height: 50px; object-fit: cover; border-radius: 4px; }
+  .search-item-info { flex: 1; overflow: hidden; }
+  .search-item-title { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .search-item-sub { font-size: 11px; color: var(--ink-dim); }
+
   .avatar{
     width:34px;height:34px;border-radius:8px;
     background:linear-gradient(135deg,var(--gold),var(--ember));
@@ -180,6 +218,23 @@
   .btn-info{background:rgba(120,120,130,0.35);color:var(--ink);backdrop-filter:blur(4px);}
   .btn-info:hover{background:rgba(120,120,130,0.5);}
   .btn-info svg{width:18px;height:18px;fill:var(--ink);}
+
+  /* ===== ADBLOCK NOTICE BANNER ===== */
+  .adblock-notice {
+    background: linear-gradient(90deg, #1f1215, #3a151b);
+    border-bottom: 1px solid var(--ember);
+    color: var(--ink);
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    position: relative;
+    z-index: 100;
+  }
+  .adblock-notice span { font-weight: 700; color: var(--gold); }
 
   /* ===== ROWS & GRID ===== */
   .rows{position:relative;z-index:3;margin-top:-70px;padding-bottom:60px;}
@@ -258,6 +313,27 @@
   .badge-anime{background:var(--gold);color:#1a1400;}
   .badge-top{background:#222;color:var(--gold);border:1px solid var(--gold);}
 
+  /* SKELETON CARD ANIMATION */
+  .skeleton-card {
+    flex: 0 0 200px;
+    height: 280px;
+    border-radius: var(--radius);
+    background: #1c1c24;
+    position: relative;
+    overflow: hidden;
+  }
+  .skeleton-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+    animation: skeleton-loading 1.4s infinite;
+  }
+  @keyframes skeleton-loading {
+    100% { transform: translateX(100%); }
+  }
+
   .rank-card{flex:0 0 240px;height:280px;display:flex;align-items:flex-end;position:relative;scroll-snap-align:start;}
   .rank-num{
     font-family:'Anton',sans-serif;font-size:130px;line-height:1;
@@ -266,9 +342,12 @@
   }
   .rank-card .card{flex:0 0 170px;margin-left:70px;}
 
-  /* ===== LOAD MORE BUTTON ===== */
+  /* ===== LOAD MORE & PAGINATION CONTROL ===== */
   .load-more-container {
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
     margin: 10px 0 20px 0;
   }
   .load-more-btn {
@@ -290,6 +369,11 @@
     border-color: var(--ember);
     transform: scale(1.15);
   }
+  .page-indicator {
+    font-size: 12px;
+    color: var(--ink-faint);
+    font-weight: 600;
+  }
 
   /* ===== CATALOG & FILTER BAR ===== */
   .filter-bar{
@@ -302,12 +386,13 @@
   }
   .pill.active, .pill:hover{background:var(--ink);color:#111;border-color:var(--ink);}
 
-  /* CATALOG SELECT DROPDOWNS */
+  /* CATALOG SELECT DROPDOWNS & SORT */
   .catalog-select-group {
     display: flex;
     gap: 10px;
     align-items: center;
     margin-left: auto;
+    flex-wrap: wrap;
   }
   .catalog-select {
     background: var(--panel);
@@ -336,7 +421,7 @@
     font-size: 13px;
   }
 
-  /* ===== MODAL ===== */
+  /* ===== MODAL & RATING SYSTEM ===== */
   .modal-overlay{
     position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:500;
     display:none;align-items:flex-start;justify-content:center;
@@ -365,6 +450,35 @@
   .modal-meta .match{color:#5bd07a;font-weight:700;}
   .modal-meta .chip{border:1px solid var(--line);padding:2px 8px;border-radius:4px;font-size:11.5px;}
   .modal-desc{color:var(--ink-dim);line-height:1.7;font-size:14.5px;margin-bottom:24px;}
+
+  /* RATING CONTROL STYLING */
+  .rating-box {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--line);
+    padding: 12px 18px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+  }
+  .star-group { display: flex; gap: 4px; cursor: pointer; }
+  .star-group span { font-size: 20px; color: var(--ink-faint); transition: color 0.2s; }
+  .star-group span.active { color: var(--gold); }
+  .vote-btns { display: flex; gap: 8px; margin-left: auto; }
+  .vote-btn {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .vote-btn.active-like { background: #1b432a; border-color: #5bd07a; color: #5bd07a; }
+  .vote-btn.active-dislike { background: #431b21; border-color: var(--ember); color: var(--ember); }
 
   /* SEASONS & EPISODES SECTION */
   .episodes-section {
@@ -481,7 +595,7 @@
     border:1px solid rgba(243,179,61,0.3);
   }
 
-  /* ===== VIDEO PLAYER ===== */
+  /* ===== VIDEO PLAYER & SUBTITLE HELP ===== */
   .player-overlay{
     position:fixed;inset:0;background:#000;z-index:800;
     display:none;flex-direction:column;align-items:stretch;justify-content:space-between;
@@ -554,6 +668,29 @@
   }
   .player-close svg{width:18px;height:18px;fill:var(--ink);}
 
+  /* HELP MODAL */
+  .help-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 950;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .help-modal.open { display: flex; }
+  .help-content {
+    background: var(--panel);
+    padding: 28px;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 100%;
+    border: 1px solid var(--line);
+  }
+  .help-content h3 { font-size: 18px; margin-bottom: 14px; color: var(--gold); }
+  .help-content ol { padding-left: 20px; line-height: 1.8; font-size: 14px; color: var(--ink-dim); margin-bottom: 20px; }
+
   /* ===== TOAST ===== */
   .toast{
     position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);
@@ -604,13 +741,21 @@
       </div>
     </div>
 
-    <div class="search-wrap">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" id="searchInput" placeholder="Search title, genre...">
+    <div class="search-container">
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Search title, genre..." autocomplete="off">
+      </div>
+      <div class="search-dropdown" id="searchDropdown"></div>
     </div>
     <div class="avatar">JV</div>
   </div>
 </nav>
+
+<!-- ADBLOCK NOTICE FOR NON-VIP -->
+<div class="adblock-notice" id="adblockNotice" style="display:none;">
+  📢 <span>Support SINEHUB:</span> Disable your Ad-Blocker or Activate a VIP Key for an uninterrupted 4K experience!
+</div>
 
 <header class="hero" id="heroSection">
   <div class="hero-bg" id="heroBg"></div>
@@ -650,8 +795,15 @@
     <button class="pill" data-filter="anime">Anime</button>
     <button class="pill" data-filter="series">TV Series</button>
     
-    <!-- CATALOG DROPDOWN FILTERS -->
+    <!-- CATALOG DROPDOWN FILTERS & SORT BY -->
     <div class="catalog-select-group">
+      <select class="catalog-select" id="sortSelect" onchange="handleSortChange()">
+        <option value="popularity.desc">Sort: Popularity</option>
+        <option value="primary_release_date.desc">Sort: Release Date (Newest)</option>
+        <option value="primary_release_date.asc">Sort: Release Date (Oldest)</option>
+        <option value="vote_average.desc">Sort: Highest Rated</option>
+      </select>
+
       <select class="catalog-select" id="genreSelect" onchange="handleCatalogFilter()">
         <option value="">All Genres</option>
         <option value="28">Action</option>
@@ -669,12 +821,22 @@
 
       <select class="catalog-select" id="yearSelect" onchange="handleCatalogFilter()">
         <option value="">All Years</option>
-        <!-- Populated via Javascript -->
       </select>
     </div>
 
     <button class="back-btn" id="backBtn" onclick="resetView()">&#8592; Back to All</button>
   </div>
+
+  <!-- CONTINUE WATCHING SECTION -->
+  <section class="row-block" id="sec-continue" style="display:none;">
+    <div class="row-head">
+      <div class="row-head-left">
+        <h2>Continue Watching</h2>
+        <span class="row-tag">Recently Played</span>
+      </div>
+    </div>
+    <div class="row-scroll" id="row-continue"></div>
+  </section>
 
   <!-- TRENDING SECTION -->
   <section class="row-block" id="sec-trending">
@@ -688,6 +850,7 @@
     <div class="row-scroll" id="row-trending"></div>
     <div class="load-more-container" id="load-trending">
       <button class="load-more-btn" title="Load More" onclick="loadMore('trending')">&#9660;</button>
+      <span class="page-indicator" id="page-trending">Page 1</span>
     </div>
   </section>
 
@@ -700,6 +863,7 @@
     <div class="row-scroll" id="row-anime"></div>
     <div class="load-more-container" id="load-anime">
       <button class="load-more-btn" title="Load More Anime" onclick="loadMore('anime')">&#9660;</button>
+      <span class="page-indicator" id="page-anime">Page 1</span>
     </div>
   </section>
 
@@ -712,6 +876,7 @@
     <div class="row-scroll" id="row-movies"></div>
     <div class="load-more-container" id="load-movies">
       <button class="load-more-btn" title="Load More Movies" onclick="loadMore('movie')">&#9660;</button>
+      <span class="page-indicator" id="page-movie">Page 1</span>
     </div>
   </section>
 
@@ -724,6 +889,7 @@
     <div class="row-scroll" id="row-series"></div>
     <div class="load-more-container" id="load-series">
       <button class="load-more-btn" title="Load More Series" onclick="loadMore('series')">&#9660;</button>
+      <span class="page-indicator" id="page-series">Page 1</span>
     </div>
   </section>
 
@@ -750,7 +916,7 @@
       <a href="#">Terms of Use</a>
     </div>
   </div>
-  <p class="fine">SINEHUB <span class="version-badge">v1.5.0</span> — Showcase web portal. Streaming API is for research and demonstration purposes only.</p>
+  <p class="fine">SINEHUB <span class="version-badge">v2.0.0</span> — Showcase web portal. Streaming API is for research and demonstration purposes only.</p>
 </footer>
 
 <!-- MODAL OVERLAY -->
@@ -760,7 +926,6 @@
 
 <!-- VIDEO PLAYER MODAL -->
 <div class="player-overlay" id="playerOverlay">
-  <!-- NOTICE BANNER FOR UNRELEASED / TRAILERS -->
   <div id="playerNotice" style="display:none; background:#e0344a; color:#fff; padding:8px 16px; text-align:center; font-size:13px; font-weight:700; z-index:10;">
     📢 <span id="noticeText">Coming soon / In theaters. Playing Official Trailer!</span>
   </div>
@@ -772,7 +937,8 @@
     </div>
 
     <div class="player-controls-right">
-      <!-- SERVER SWITCH BUTTONS -->
+      <button class="player-btn" onclick="toggleHelpModal()" style="background:rgba(243,179,61,0.2); color:var(--gold);">⚙️ Subtitles Guide</button>
+
       <div class="server-group">
         <button class="server-btn active" id="btn-vidsrc.me" onclick="switchServer('vidsrc.me')">Server 1</button>
         <button class="server-btn" id="btn-vidsrc.cc" onclick="switchServer('vidsrc.cc')">Server 2</button>
@@ -795,10 +961,24 @@
   </iframe>
 </div>
 
+<!-- SUBTITLE HELP MODAL -->
+<div class="help-modal" id="helpModal">
+  <div class="help-content">
+    <h3> How to Enable Subtitles</h3>
+    <ol>
+      <li>Click the <strong>Settings (⚙️) / CC</strong> icon inside the video player bottom-bar.</li>
+      <li>Select <strong>Subtitles / CC</strong> from the menu.</li>
+      <li>Choose <strong>English</strong> or <strong>Tagalog / Filipino</strong> (if available for the stream).</li>
+      <li>If subtitles do not load, switch to <strong>Server 2</strong> or <strong>Server 3</strong>.</li>
+    </ol>
+    <button class="btn btn-play" style="width:100%; justify-content:center;" onclick="toggleHelpModal()">Got It!</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
-/* ================= VIP SYSTEM LOGIC ================= */
+/* ================= VIP SYSTEM LOGIC (WITH EXPIRATION) ================= */
 const VALID_VIP_KEYS = [
   "SINEHUBVIP2026",
   "VIP-USER-100",
@@ -807,22 +987,33 @@ const VALID_VIP_KEYS = [
 ];
 
 function checkVIPStatus() {
-  const isVIP = localStorage.getItem("sinehub_vip_user");
+  const vipData = JSON.parse(localStorage.getItem("sinehub_vip_session") || "null");
   const container = document.getElementById("vip-container");
+  const adblockNotice = document.getElementById("adblockNotice");
 
-  if (isVIP === "true") {
-    if (container) {
-      container.innerHTML = `<span class="vip-badge-active">★ VIP MEMBER</span>`;
+  if (vipData && vipData.isVip) {
+    const now = new Date().getTime();
+    if (now < vipData.expiry) {
+      const daysLeft = Math.ceil((vipData.expiry - now) / (1000 * 60 * 60 * 24));
+      if (container) {
+        container.innerHTML = `<span class="vip-badge-active">★ VIP (${daysLeft}d left)</span>`;
+      }
+      const bannerContainer = document.getElementById("adsterra-banner-container");
+      if (bannerContainer) bannerContainer.style.display = "none";
+      if (adblockNotice) adblockNotice.style.display = "none";
+      return;
+    } else {
+      localStorage.removeItem("sinehub_vip_session");
+      showToast("Your VIP membership has expired.");
     }
-    const bannerContainer = document.getElementById("adsterra-banner-container");
-    if (bannerContainer) bannerContainer.style.display = "none";
-  } else {
-    let bannerScript = document.createElement('script');
-    bannerScript.async = true;
-    bannerScript.dataset.cfasync = "false";
-    bannerScript.src = "https://pl30793941.effectivecpmnetwork.com/e5de4f822ecb95bc3718b0887118fc7c/invoke.js";
-    document.body.appendChild(bannerScript);
   }
+
+  if (adblockNotice) adblockNotice.style.display = "flex";
+  let bannerScript = document.createElement('script');
+  bannerScript.async = true;
+  bannerScript.dataset.cfasync = "false";
+  bannerScript.src = "https://pl30793941.effectivecpmnetwork.com/e5de4f822ecb95bc3718b0887118fc7c/invoke.js";
+  document.body.appendChild(bannerScript);
 }
 
 function activateVIP() {
@@ -832,8 +1023,13 @@ function activateVIP() {
   const userKey = input.value.trim().toUpperCase();
 
   if (VALID_VIP_KEYS.includes(userKey)) {
-    localStorage.setItem("sinehub_vip_user", "true");
-    showToast("VIP Successfully Activated! Ads disabled.");
+    const thirtyDays = 30 * 24 * 60 * 60 * 1000;
+    const session = {
+      isVip: true,
+      expiry: new Date().getTime() + thirtyDays
+    };
+    localStorage.setItem("sinehub_vip_session", JSON.stringify(session));
+    showToast("VIP Activated (30-Day Pass)! Ads disabled.");
     checkVIPStatus();
   } else {
     showToast("Invalid VIP Key! Please try again.");
@@ -855,6 +1051,8 @@ function populateYearSelect() {
 document.addEventListener("DOMContentLoaded", () => {
   checkVIPStatus();
   populateYearSelect();
+  renderContinueWatching();
+  checkUrlForDirectModal();
 });
 
 const TMDB_API_KEY = '847d91d3590d1c54d627043a35cd1a84';
@@ -887,7 +1085,18 @@ function updateByIdMap() {
   byId = Object.fromEntries(TITLES.map(t => [t.id, t]));
 }
 
-/* ================= RENDER LOGIC ================= */
+/* ================= SKELETON & CARD RENDER LOGIC ================= */
+function getSkeletonCards(count = 6) {
+  return Array(count).fill('<div class="skeleton-card"></div>').join('');
+}
+
+function renderSkeletons() {
+  ['row-trending', 'row-anime', 'row-movies', 'row-series'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.innerHTML = getSkeletonCards(6);
+  });
+}
+
 function cardHTML(t){
   const badge = t.type === 'anime' ? '<span class="card-badge badge-anime">Anime</span>'
               : t.match >= 85 ? '<span class="card-badge badge-top">Top Pick</span>' : '';
@@ -951,10 +1160,37 @@ function renderMyList(){
   if(el) el.innerHTML = list.map(t => cardHTML(t)).join('');
 }
 
-/* ================= CATALOG FILTERING ENGINE ================= */
+/* ================= CONTINUE WATCHING ================= */
+function saveToContinueWatching(id, season = 1, episode = 1) {
+  let history = JSON.parse(localStorage.getItem("sinehub_continue") || "[]");
+  history = history.filter(item => item.id !== id);
+  history.unshift({ id, season, episode, timestamp: new Date().getTime() });
+  localStorage.setItem("sinehub_continue", JSON.stringify(history.slice(0, 10)));
+  renderContinueWatching();
+}
+
+function renderContinueWatching() {
+  const history = JSON.parse(localStorage.getItem("sinehub_continue") || "[]");
+  const section = document.getElementById("sec-continue");
+  const row = document.getElementById("row-continue");
+
+  if (!history.length || !row) {
+    if(section) section.style.display = "none";
+    return;
+  }
+
+  const items = history.map(h => byId[h.id]).filter(Boolean);
+  if (items.length) {
+    section.style.display = "block";
+    row.innerHTML = items.map(t => cardHTML(t)).join('');
+  }
+}
+
+/* ================= CATALOG FILTERING & SORTING ================= */
 async function handleCatalogFilter() {
   const genre = document.getElementById('genreSelect').value;
   const year = document.getElementById('yearSelect').value;
+  const sortBy = document.getElementById('sortSelect').value;
 
   if (!genre && !year) {
     if (currentActiveType === 'all') resetView();
@@ -965,10 +1201,9 @@ async function handleCatalogFilter() {
   showToast('Filtering Catalog...');
 
   let mediaType = 'movie';
-  if (currentActiveType === 'series') mediaType = 'tv';
-  if (currentActiveType === 'anime') mediaType = 'tv';
+  if (currentActiveType === 'series' || currentActiveType === 'anime') mediaType = 'tv';
 
-  let url = `https://api.themoviedb.org/3/discover/${mediaType}?api_key=${TMDB_API_KEY}&sort_by=popularity.desc`;
+  let url = `https://api.themoviedb.org/3/discover/${mediaType}?api_key=${TMDB_API_KEY}&sort_by=${sortBy}`;
 
   if (genre) url += `&with_genres=${genre}`;
   if (year) {
@@ -990,7 +1225,7 @@ async function handleCatalogFilter() {
       updateByIdMap();
 
       document.querySelectorAll('.row-block').forEach((rb, i) => { 
-        rb.style.display = i === 0 ? 'block' : 'none'; 
+        rb.style.display = (i === 0 || rb.id === 'sec-continue') ? 'block' : 'none'; 
       });
 
       const genreText = genre ? document.getElementById('genreSelect').options[document.getElementById('genreSelect').selectedIndex].text : '';
@@ -1013,7 +1248,11 @@ async function handleCatalogFilter() {
   }
 }
 
-/* ================= MODAL & EPISODES FETCH ================= */
+function handleSortChange() {
+  handleCatalogFilter();
+}
+
+/* ================= MODAL, SHARE & RATING ================= */
 async function openModalById(id){
   const t = byId[id];
   if(!t) return;
@@ -1022,6 +1261,7 @@ async function openModalById(id){
   const backdropUrl = t.backdrop ? `${BACKDROP_BASE}${t.backdrop}` : (t.poster ? `${IMAGE_BASE}${t.poster}` : '');
 
   const isTV = (t.type === 'series' || t.type === 'anime');
+  const userRating = getSavedRating(id);
 
   document.getElementById('modalBox').innerHTML = `
     <div class="modal-hero">
@@ -1039,6 +1279,9 @@ async function openModalById(id){
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             ${inList ? 'In My List' : 'Add to My List'}
           </button>
+          <button class="btn btn-info" onclick="shareTitle('${t.id}')">
+             Share
+          </button>
         </div>
       </div>
     </div>
@@ -1048,6 +1291,19 @@ async function openModalById(id){
         <span>${t.year}</span>
         <span class="chip">${t.type.toUpperCase()}</span>
       </div>
+
+      <!-- INTERACTIVE RATING -->
+      <div class="rating-box">
+        <span style="font-size:13px; font-weight:700;">Rate this:</span>
+        <div class="star-group" id="starGroup">
+          ${[1,2,3,4,5].map(star => `<span onclick="rateTitle('${id}', ${star})" class="${star <= userRating.stars ? 'active' : ''}">★</span>`).join('')}
+        </div>
+        <div class="vote-btns">
+          <button class="vote-btn ${userRating.vote === 'like' ? 'active-like' : ''}" onclick="voteTitle('${id}', 'like')">👍 Like</button>
+          <button class="vote-btn ${userRating.vote === 'dislike' ? 'active-dislike' : ''}" onclick="voteTitle('${id}', 'dislike')">👎 Dislike</button>
+        </div>
+      </div>
+
       <p class="modal-desc">${t.desc}</p>
 
       ${isTV ? `
@@ -1080,6 +1336,46 @@ async function openModalById(id){
 
   if (isTV) {
     fetchTVDetails(t.tmdbId, t.id);
+  }
+}
+
+/* RATING SYSTEM HELPERS */
+function getSavedRating(id) {
+  const ratings = JSON.parse(localStorage.getItem("sinehub_ratings") || "{}");
+  return ratings[id] || { stars: 0, vote: null };
+}
+
+function rateTitle(id, stars) {
+  let ratings = JSON.parse(localStorage.getItem("sinehub_ratings") || "{}");
+  if (!ratings[id]) ratings[id] = { stars: 0, vote: null };
+  ratings[id].stars = stars;
+  localStorage.setItem("sinehub_ratings", JSON.stringify(ratings));
+  showToast(`Rated ${stars} Stars!`);
+  openModalById(id);
+}
+
+function voteTitle(id, voteType) {
+  let ratings = JSON.parse(localStorage.getItem("sinehub_ratings") || "{}");
+  if (!ratings[id]) ratings[id] = { stars: 0, vote: null };
+  ratings[id].vote = voteType;
+  localStorage.setItem("sinehub_ratings", JSON.stringify(ratings));
+  showToast(voteType === 'like' ? 'Marked as Liked!' : 'Marked as Disliked!');
+  openModalById(id);
+}
+
+function shareTitle(id) {
+  const shareUrl = `${window.location.origin}${window.location.pathname}?id=${id}`;
+  navigator.clipboard.writeText(shareUrl);
+  showToast("Direct link copied to clipboard!");
+}
+
+function checkUrlForDirectModal() {
+  const params = new URLSearchParams(window.location.search);
+  const directId = params.get("id");
+  if (directId) {
+    setTimeout(() => {
+      if(byId[directId]) openModalById(directId);
+    }, 1000);
   }
 }
 
@@ -1165,7 +1461,7 @@ function showToast(msg){
   toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
 }
 
-/* ================= STREAMING PLAYER SETUP & TRAILER FALLBACK ================= */
+/* ================= STREAMING PLAYER SETUP & SUBTITLE HELP ================= */
 function openPlayer(id, season = 1, episode = 1, totalEpInSeason = 24){
   const t = byId[id];
   if(!t) return;
@@ -1176,6 +1472,8 @@ function openPlayer(id, season = 1, episode = 1, totalEpInSeason = 24){
     episode: episode,
     totalEpisodesInSeason: totalEpInSeason
   };
+
+  saveToContinueWatching(id, season, episode);
 
   const isTV = (t.type === 'series' || t.type === 'anime');
 
@@ -1195,7 +1493,6 @@ function openPlayer(id, season = 1, episode = 1, totalEpInSeason = 24){
     prevBtn.style.display = 'none';
   }
 
-  // Tumingin sa release date para sa mga unreleased/in-theaters na palabas
   const today = new Date().toISOString().split('T')[0];
   const releaseDate = t.releaseDate || t.release_date || t.first_air_date;
 
@@ -1303,6 +1600,10 @@ function closePlayer(){
   document.getElementById('playerOverlay').classList.remove('open');
 }
 
+function toggleHelpModal() {
+  document.getElementById('helpModal').classList.toggle('open');
+}
+
 /* ================= HERO ROTATION ================= */
 let heroIdx = 0;
 function updateHeroDisplay(t) {
@@ -1335,6 +1636,7 @@ setInterval(rotateHero, 8000);
 
 /* ================= API INTEGRATIONS ================= */
 async function fetchAllData() {
+  renderSkeletons();
   try {
     const resMovies = await fetch(`https://api.themoviedb.org/3/trending/movie/week?api_key=${TMDB_API_KEY}&page=1`);
     const dataMovies = await resMovies.json();
@@ -1352,6 +1654,7 @@ async function fetchAllData() {
     TITLES = [...formattedMovies, ...formattedAnime, ...formattedSeries];
     updateByIdMap();
     renderAll();
+    renderContinueWatching();
 
     if(TITLES.length > 0) updateHeroDisplay(TITLES[0]);
   } catch(err) {
@@ -1375,7 +1678,7 @@ function transformTMDB(item, category, isTrending = false) {
   };
 }
 
-/* ================= LOAD MORE & SEE ALL LOGIC ================= */
+/* ================= LOAD MORE & PAGINATION INDICATOR ================= */
 async function loadMore(category) {
   currentPages[category]++;
   const page = currentPages[category];
@@ -1403,7 +1706,11 @@ async function loadMore(category) {
 
       const targetRowId = category === 'trending' ? 'row-trending' : `row-${category === 'movie' ? 'movies' : category}`;
       appendToRow(targetRowId, newItems);
-      showToast(`Loaded more ${category.toUpperCase()}...`);
+
+      const pageIndicator = document.getElementById(`page-${category}`);
+      if(pageIndicator) pageIndicator.textContent = `Page ${page}`;
+
+      showToast(`Loaded Page ${page} for ${category.toUpperCase()}`);
     }
   } catch (err) {
     console.error(`Error loading more ${category}:`, err);
@@ -1427,7 +1734,6 @@ function showAllSection(category) {
 
   document.getElementById('backBtn').style.display = 'inline-block';
 
-  loadMore(category);
   loadMore(category);
 
   document.getElementById(`sec-${targetSecId}`).scrollIntoView({ behavior: 'smooth' });
@@ -1461,9 +1767,10 @@ function resetView() {
   if(searchInput) searchInput.value = '';
 
   renderAll();
+  renderContinueWatching();
 }
 
-/* ================= FILTERS & SEARCH ================= */
+/* ================= FILTERS & SEARCH DROPDOWN ================= */
 document.querySelectorAll('.pill, .nav-links a[data-filter]').forEach(btn => {
   btn.addEventListener('click', e => {
     e.preventDefault();
@@ -1479,22 +1786,26 @@ function applyFilter(f){
   showAllSection(f);
 }
 
-/* REAL-TIME TMDB DATABASE SEARCH */
-document.getElementById('searchInput').addEventListener('input', e => {
+/* LIVE SEARCH DROPDOWN ENGINE */
+const searchInput = document.getElementById('searchInput');
+const searchDropdown = document.getElementById('searchDropdown');
+
+searchInput.addEventListener('input', e => {
   const q = e.target.value.trim();
 
   if (!q) {
+    searchDropdown.classList.remove('open');
     resetView();
     return;
   }
 
   clearTimeout(searchTimeout);
   searchTimeout = setTimeout(() => {
-    searchTMDB(q);
-  }, 400);
+    searchTMDBDropdown(q);
+  }, 300);
 });
 
-async function searchTMDB(query) {
+async function searchTMDBDropdown(query) {
   try {
     const res = await fetch(`https://api.themoviedb.org/3/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}&page=1`);
     const data = await res.json();
@@ -1502,6 +1813,7 @@ async function searchTMDB(query) {
     if (data.results && data.results.length > 0) {
       const searchResults = data.results
         .filter(item => item.media_type === 'movie' || item.media_type === 'tv')
+        .slice(0, 6)
         .map(item => {
           const isAnime = item.genre_ids?.includes(16) && item.original_language === 'ja';
           const type = item.media_type === 'movie' ? 'movie' : (isAnime ? 'anime' : 'series');
@@ -1511,26 +1823,30 @@ async function searchTMDB(query) {
       TITLES.push(...searchResults);
       updateByIdMap();
 
-      document.querySelectorAll('.row-block').forEach((rb, i) => { 
-        rb.style.display = i === 0 ? 'block' : 'none'; 
-      });
-
-      document.getElementById('title-trending').textContent = `Results for "${query}"`;
-      document.getElementById('tag-trending').textContent = `${searchResults.length} Found`;
-      
-      const rowTrending = document.getElementById('row-trending');
-      rowTrending.classList.add('grid-mode');
-      
-      renderRow('row-trending', searchResults, false);
-      document.getElementById('backBtn').style.display = 'inline-block';
+      searchDropdown.innerHTML = searchResults.map(s => `
+        <div class="search-item" onclick="openModalById('${s.id}'); searchDropdown.classList.remove('open');">
+          <img src="${s.poster ? IMAGE_BASE + s.poster : 'https://via.placeholder.com/50x75'}" alt="${s.title}">
+          <div class="search-item-info">
+            <div class="search-item-title">${s.title}</div>
+            <div class="search-item-sub">${s.year} • ${s.type.toUpperCase()}</div>
+          </div>
+        </div>
+      `).join('');
+      searchDropdown.classList.add('open');
     } else {
-      renderRow('row-trending', [], false);
-      document.getElementById('title-trending').textContent = `No results found for "${query}"`;
+      searchDropdown.innerHTML = `<div class="search-item" style="color:var(--ink-faint);">No results found.</div>`;
+      searchDropdown.classList.add('open');
     }
   } catch (err) {
     console.error('Error during search:', err);
   }
 }
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.search-container')) {
+    searchDropdown.classList.remove('open');
+  }
+});
 
 window.addEventListener('scroll', () => {
   document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
@@ -1541,7 +1857,8 @@ fetchAllData();
 
   <!-- ADSTERRA ANTI-ADBLOCK POPUNDER SCRIPT -->
   <script type="text/javascript">
-    if (localStorage.getItem("sinehub_vip_user") !== "true") {
+    const vipSession = JSON.parse(localStorage.getItem("sinehub_vip_session") || "null");
+    if (!vipSession || !vipSession.isVip) {
       let antiAdblockScript = document.createElement('script');
       antiAdblockScript.src = "https://embargotechniquebattle.com/3f/ea/af/3feaafce0073904a81164f7dea258294.js";
       document.body.appendChild(antiAdblockScript);
