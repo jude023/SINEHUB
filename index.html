@@ -978,13 +978,13 @@
 <div class="toast" id="toast"></div>
 
 <script>
-/* ================= VIP SYSTEM LOGIC (WITH EXPIRATION) ================= */
-const VALID_VIP_KEYS = [
-  "SINEHUBVIP2026",
-  "VIP-USER-100",
-  "SINEHUB-PROMO2026",
-  "ADMIN-KEY-888"
-];
+/* ================= VIP SYSTEM LOGIC (WITH EXPIRATION & CONFIG) ================= */
+const VIP_KEYS_CONFIG = {
+  "ADMIN-KEY-888": { durationMs: Infinity, label: "Permanent Pass" },
+  "VIP-USER-30D": { durationMs: 30 * 24 * 60 * 60 * 1000, label: "30-Day Pass" },
+  "SINEHUB-PROMO2026": { durationMs: 15 * 24 * 60 * 60 * 1000, label: "15-Day Pass" },
+  "SINEHUBVIPTRIAL2026": { durationMs: 24 * 60 * 60 * 1000, label: "24-Hour Pass" }
+};
 
 function checkVIPStatus() {
   const vipData = JSON.parse(localStorage.getItem("sinehub_vip_session") || "null");
@@ -993,10 +993,28 @@ function checkVIPStatus() {
 
   if (vipData && vipData.isVip) {
     const now = new Date().getTime();
-    if (now < vipData.expiry) {
-      const daysLeft = Math.ceil((vipData.expiry - now) / (1000 * 60 * 60 * 24));
+    
+    // Check if permanent admin pass
+    if (vipData.isPermanent || vipData.expiry === null) {
       if (container) {
-        container.innerHTML = `<span class="vip-badge-active">★ VIP (${daysLeft}d left)</span>`;
+        container.innerHTML = `<span class="vip-badge-active">★ VIP (Permanent)</span>`;
+      }
+      const bannerContainer = document.getElementById("adsterra-banner-container");
+      if (bannerContainer) bannerContainer.style.display = "none";
+      if (adblockNotice) adblockNotice.style.display = "none";
+      return;
+    }
+
+    // Check if key is still active
+    if (now < vipData.expiry) {
+      const msLeft = vipData.expiry - now;
+      const hoursLeft = Math.ceil(msLeft / (1000 * 60 * 60));
+      const daysLeft = Math.ceil(msLeft / (1000 * 60 * 60 * 24));
+      
+      const badgeText = hoursLeft <= 24 ? `${hoursLeft}h left` : `${daysLeft}d left`;
+
+      if (container) {
+        container.innerHTML = `<span class="vip-badge-active">★ VIP (${badgeText})</span>`;
       }
       const bannerContainer = document.getElementById("adsterra-banner-container");
       if (bannerContainer) bannerContainer.style.display = "none";
@@ -1022,14 +1040,19 @@ function activateVIP() {
 
   const userKey = input.value.trim().toUpperCase();
 
-  if (VALID_VIP_KEYS.includes(userKey)) {
-    const thirtyDays = 30 * 24 * 60 * 60 * 1000;
+  if (VIP_KEYS_CONFIG[userKey]) {
+    const keyInfo = VIP_KEYS_CONFIG[userKey];
+    const isPermanent = keyInfo.durationMs === Infinity;
+    
     const session = {
       isVip: true,
-      expiry: new Date().getTime() + thirtyDays
+      keyUsed: userKey,
+      isPermanent: isPermanent,
+      expiry: isPermanent ? null : new Date().getTime() + keyInfo.durationMs
     };
+
     localStorage.setItem("sinehub_vip_session", JSON.stringify(session));
-    showToast("VIP Activated (30-Day Pass)! Ads disabled.");
+    showToast(`VIP Activated (${keyInfo.label})! Ads disabled.`);
     checkVIPStatus();
   } else {
     showToast("Invalid VIP Key! Please try again.");
