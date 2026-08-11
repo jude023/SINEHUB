@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="fil">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SINEHUB — Panoorin Nang Walang Katapusan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0a0a0d;
+    --bg-soft: #121216;
+    --panel: #17171c;
+    --ember: #e0344a;
+    --ember-deep: #a11f31;
+    --gold: #f3b33d;
+    --ink: #f5f4f0;
+    --ink-dim: #a8a7ad;
+    --ink-faint: #6d6c74;
+    --line: rgba(255,255,255,0.08);
+    --radius: 6px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    overflow-x:hidden;
+  }
+  ::-webkit-scrollbar{height:8px;width:8px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:#333338;border-radius:10px;}
+  a{color:inherit;text-decoration:none;}
+  button, select{font-family:inherit;cursor:pointer;border:none;}
+  img{display:block;max-width:100%;}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+
+  /* ===== NAVBAR ===== */
+  .navbar{
+    position:fixed;top:0;left:0;right:0;z-index:200;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 44px;
+    transition:background .35s ease, box-shadow .35s ease, padding .35s ease;
+  }
+  .navbar.scrolled{
+    background:rgba(10,10,13,0.96);
+    box-shadow:0 4px 24px rgba(0,0,0,0.5);
+    padding:12px 44px;
+    backdrop-filter: blur(6px);
+  }
+  .nav-left{display:flex;align-items:center;gap:36px;}
+  .logo{
+    font-family:'Anton',sans-serif;
+    font-size:28px;letter-spacing:1px;
+    color:var(--ember);
+    display:flex;align-items:center;gap:8px;
+    text-shadow:0 0 24px rgba(224,52,74,0.45);
+  }
+  .logo .mark{
+    width:26px;height:26px;border-radius:6px;
+    background:linear-gradient(135deg,var(--ember),var(--ember-deep));
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 0 18px rgba(224,52,74,.6);
+  }
+  .logo .mark svg{width:14px;height:14px;fill:var(--ink);}
+  .nav-links{display:flex;gap:24px;list-style:none;}
+  .nav-links li a{
+    font-size:14.5px;color:var(--ink-dim);font-weight:500;
+    transition:color .2s;position:relative;padding-bottom:4px;
+  }
+  .nav-links li a.active{color:var(--ink);font-weight:700;}
+  .nav-links li a:hover{color:var(--ink);}
+  .nav-right{display:flex;align-items:center;gap:20px;}
+  .search-wrap{display:flex;align-items:center;background:rgba(255,255,255,0.06);border:1px solid var(--line);border-radius:20px;padding:8px 14px;gap:8px;width:230px;transition:border-color .2s, width .2s;}
+  .search-wrap:focus-within{border-color:var(--ember);width:270px;}
+  .search-wrap svg{width:15px;height:15px;flex-shrink:0;opacity:.6;}
+  .search-wrap input{background:none;border:none;color:var(--ink);font-size:13.5px;width:100%;}
+  .search-wrap input::placeholder{color:var(--ink-faint);}
+  .avatar{
+    width:34px;height:34px;border-radius:8px;
+    background:linear-gradient(135deg,var(--gold),var(--ember));
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800;font-size:14px;color:#1a1a1a;
+  }
+
+  /* ===== HERO ===== */
+  .hero{
+    position:relative;height:96vh;min-height:560px;
+    display:flex;align-items:flex-end;
+    overflow:hidden;
+  }
+  .hero-bg{
+    position:absolute;inset:0;
+    background-size:cover;
+    background-position:center;
+    transition: background-image 0.5s ease-in-out;
+  }
+  .hero-bg::after{
+    content:"";position:absolute;inset:0;
+    background:
+      linear-gradient(to top, var(--bg) 2%, transparent 42%),
+      linear-gradient(to right, rgba(10,10,13,0.85) 5%, transparent 55%);
+  }
+  .hero-noise{
+    position:absolute;inset:0;opacity:.05;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .hero-content{position:relative;z-index:2;padding:0 44px 80px;max-width:640px;}
+  .hero-badge{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:12.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+    color:var(--gold);margin-bottom:18px;
+  }
+  .hero-badge::before{content:"";width:18px;height:2px;background:var(--gold);}
+  .hero-title{
+    font-family:'Anton',sans-serif;
+    font-size:clamp(36px,6vw,72px);
+    line-height:0.95;letter-spacing:0.5px;
+    margin-bottom:18px;
+    text-shadow:0 8px 40px rgba(0,0,0,0.6);
+  }
+  .hero-meta{display:flex;align-items:center;gap:14px;margin-bottom:18px;font-size:14px;color:var(--ink-dim);}
+  .hero-meta .chip{
+    border:1px solid var(--line);padding:3px 10px;border-radius:4px;font-size:12px;font-weight:600;
+  }
+  .hero-meta .score{color:var(--gold);font-weight:700;}
+  .hero-desc{color:var(--ink-dim);font-size:15px;line-height:1.6;margin-bottom:30px;max-width:520px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+  .hero-actions{display:flex;gap:14px;}
+  .btn{
+    display:flex;align-items:center;gap:10px;
+    padding:13px 26px;border-radius:6px;font-weight:700;font-size:15px;
+    transition:transform .15s ease, opacity .15s ease, background .2s;
+  }
+  .btn:active{transform:scale(0.97);}
+  .btn-play{background:var(--ink);color:#111;}
+  .btn-play:hover{background:#e8e8e4;}
+  .btn-play svg{width:16px;height:16px;fill:#111;}
+  .btn-info{background:rgba(120,120,130,0.35);color:var(--ink);backdrop-filter:blur(4px);}
+  .btn-info:hover{background:rgba(120,120,130,0.5);}
+  .btn-info svg{width:18px;height:18px;fill:var(--ink);}
+
+  /* ===== ROWS & GRID ===== */
+  .rows{position:relative;z-index:3;margin-top:-70px;padding-bottom:60px;}
+  .row-block{padding:0 44px;margin-bottom:44px;}
+  .row-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .row-head-left{display:flex;align-items:baseline;gap:12px;}
+  .row-head h2{font-size:20px;font-weight:800;letter-spacing:0.2px;}
+  .row-head .row-tag{font-size:12px;color:var(--ink-faint);font-weight:600;text-transform:uppercase;letter-spacing:1px;}
+  
+  .see-all-btn {
+    background: transparent;
+    color: var(--ember);
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 14px;
+    transition: color 0.2s, transform 0.2s;
+  }
+  .see-all-btn:hover {
+    color: #ff4d63;
+    text-decoration: underline;
+    transform: translateX(2px);
+  }
+
+  .row-scroll{
+    display:flex;gap:14px;overflow-x:auto;padding:10px 4px 20px;
+    scroll-snap-type:x proximity;
+    scroll-behavior: smooth;
+  }
+  .row-scroll::-webkit-scrollbar{display:none;}
+  .row-scroll{scrollbar-width:none;}
+
+  .grid-mode {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)) !important;
+    gap: 20px !important;
+    overflow-x: visible !important;
+  }
+  .grid-mode .card, .grid-mode .rank-card {
+    flex: none !important;
+    width: 100% !important;
+  }
+  .grid-mode .rank-card {
+    margin-left: 0 !important;
+  }
+  .grid-mode .rank-num {
+    display: none !important;
+  }
+
+  .card{
+    position:relative;flex:0 0 200px;height:280px;border-radius:var(--radius);
+    cursor:pointer;overflow:hidden;scroll-snap-align:start;
+    transition:transform .28s cubic-bezier(.2,.9,.3,1.2), box-shadow .28s ease;
+    display:flex;align-items:flex-end;
+  }
+  .card:hover, .card:focus-visible{
+    transform:scale(1.08) translateY(-8px);
+    z-index:5;
+    box-shadow:0 20px 50px rgba(0,0,0,0.8);
+  }
+  .card-art{position:absolute;inset:0;background-size:cover;background-position:center;}
+  .card-art::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 60%, transparent 100%);
+  }
+  .card-body{position:relative;z-index:2;padding:12px;width:100%;}
+  .card-title{font-size:14px;font-weight:700;line-height:1.25;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .card-sub{display:flex;gap:6px;align-items:center;font-size:11px;color:var(--ink-dim);}
+  .card-sub .dot{width:3px;height:3px;background:var(--ink-faint);border-radius:50%;}
+  .card-sub .match{color:#5bd07a;font-weight:700;}
+  .card-badge{
+    position:absolute;left:10px;top:10px;z-index:2;
+    font-size:10px;font-weight:800;letter-spacing:0.5px;
+    padding:3px 7px;border-radius:3px;text-transform:uppercase;
+  }
+  .badge-anime{background:var(--gold);color:#1a1400;}
+  .badge-top{background:#222;color:var(--gold);border:1px solid var(--gold);}
+
+  .rank-card{flex:0 0 240px;height:280px;display:flex;align-items:flex-end;position:relative;scroll-snap-align:start;}
+  .rank-num{
+    font-family:'Anton',sans-serif;font-size:130px;line-height:1;
+    color:transparent;-webkit-text-stroke:2px var(--ink-faint);
+    position:absolute;left:-5px;bottom:-15px;z-index:1;user-select:none;
+  }
+  .rank-card .card{flex:0 0 170px;margin-left:70px;}
+
+  /* ===== LOAD MORE BUTTON ===== */
+  .load-more-container {
+    text-align: center;
+    margin: 10px 0 20px 0;
+  }
+  .load-more-btn {
+    background: var(--panel);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s, border-color 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .load-more-btn:hover {
+    background: var(--ember);
+    border-color: var(--ember);
+    transform: scale(1.15);
+  }
+
+  /* ===== GENRE PILLS ===== */
+  .filter-bar{
+    display:flex;gap:10px;padding:0 44px;margin:0 0 16px;flex-wrap:wrap;align-items:center;
+  }
+  .pill{
+    padding:8px 18px;border-radius:20px;border:1px solid var(--line);
+    font-size:13px;font-weight:600;color:var(--ink-dim);background:rgba(255,255,255,0.03);
+    transition:all .2s;
+  }
+  .pill.active, .pill:hover{background:var(--ink);color:#111;border-color:var(--ink);}
+
+  .back-btn {
+    background: var(--ember);
+    color: #fff;
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    display: none;
+    font-size: 13px;
+  }
+
+  /* ===== MODAL ===== */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:500;
+    display:none;align-items:flex-start;justify-content:center;
+    padding:40px 20px;overflow-y:auto;
+  }
+  .modal-overlay.open{display:flex;animation:fadeIn .2s ease;}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .modal{
+    background:var(--panel);width:100%;max-width:820px;border-radius:12px;overflow:hidden;
+    box-shadow:0 30px 90px rgba(0,0,0,0.9);animation:slideUp .28s cubic-bezier(.2,.9,.3,1.1);
+  }
+  @keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+  .modal-hero{position:relative;height:340px;}
+  .modal-hero .m-art{position:absolute;inset:0;background-size:cover;background-position:center;}
+  .modal-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(to top, var(--panel) 4%, transparent 55%);}
+  .modal-close{
+    position:absolute;top:16px;right:16px;z-index:10;
+    width:36px;height:36px;border-radius:50%;background:rgba(20,20,22,0.8);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .modal-close svg{width:16px;height:16px;fill:var(--ink);}
+  .modal-hero-content{position:absolute;bottom:26px;left:36px;right:36px;z-index:2;}
+  .modal-hero-content h2{font-family:'Anton',sans-serif;font-size:38px;margin-bottom:14px;letter-spacing:.5px;}
+  .modal-body{padding:8px 36px 36px;}
+  .modal-meta{display:flex;gap:14px;align-items:center;margin-bottom:16px;font-size:13.5px;color:var(--ink-dim);flex-wrap:wrap;}
+  .modal-meta .match{color:#5bd07a;font-weight:700;}
+  .modal-meta .chip{border:1px solid var(--line);padding:2px 8px;border-radius:4px;font-size:11.5px;}
+  .modal-desc{color:var(--ink-dim);line-height:1.7;font-size:14.5px;margin-bottom:24px;}
+
+  /* SEASONS & EPISODES SECTION */
+  .episodes-section {
+    margin-bottom: 30px;
+    border-top: 1px solid var(--line);
+    padding-top: 20px;
+  }
+  .episodes-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .episodes-header h3 {
+    font-size: 18px;
+    font-weight: 800;
+  }
+  .season-select {
+    background: var(--bg-soft);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    outline: none;
+  }
+  .season-select:focus {
+    border-color: var(--ember);
+  }
+  .episodes-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 380px;
+    overflow-y: auto;
+    padding-right: 6px;
+  }
+  .ep-card {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--line);
+    padding: 10px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .ep-card:hover {
+    background: rgba(255,255,255,0.08);
+    border-color: var(--ember);
+  }
+  .ep-num {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--ink-faint);
+    width: 28px;
+    text-align: center;
+  }
+  .ep-thumb {
+    width: 110px;
+    height: 65px;
+    border-radius: 4px;
+    background-size: cover;
+    background-position: center;
+    flex-shrink: 0;
+    position: relative;
+    background-color: #222;
+  }
+  .ep-info {
+    flex: 1;
+    overflow: hidden;
+  }
+  .ep-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .ep-overview {
+    font-size: 12px;
+    color: var(--ink-dim);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.4;
+  }
+
+  .modal-similar h3{font-size:16px;margin-bottom:12px;font-weight:800;}
+  .similar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  .sim-card{border-radius:6px;overflow:hidden;height:120px;position:relative;cursor:pointer;background-size:cover;background-position:center;}
+  .sim-card::after{content:"";position:absolute;inset:0;background:linear-gradient(to top, rgba(0,0,0,.9), transparent 60%);}
+  .sim-card span{position:absolute;bottom:6px;left:8px;right:8px;z-index:2;font-size:11.5px;font-weight:700;}
+
+  /* ===== FOOTER ===== */
+  footer{padding:60px 44px 40px;border-top:1px solid var(--line);margin-top:60px;color:var(--ink-faint);}
+  .footer-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;max-width:900px;margin-bottom:30px;}
+  .footer-grid a{display:block;font-size:13px;color:var(--ink-faint);margin-bottom:12px;transition:color .2s;}
+  .footer-grid a:hover{color:var(--ink-dim);text-decoration:underline;}
+  footer .fine{font-size:12.5px;line-height:1.7;}
+  .version-badge{
+    display:inline-block;
+    background:rgba(255,255,255,0.08);
+    color:var(--gold);
+    font-size:11px;
+    font-weight:700;
+    padding:2px 8px;
+    border-radius:4px;
+    margin-left:6px;
+    border:1px solid rgba(243,179,61,0.3);
+  }
+
+  /* ===== VIDEO PLAYER ===== */
+  .player-overlay{
+    position:fixed;inset:0;background:#000;z-index:800;
+    display:none;flex-direction:column;align-items:stretch;justify-content:space-between;
+  }
+  .player-overlay.open{display:flex;animation:fadeIn .2s ease;}
+  .player-overlay iframe{width:100%;height:100%;border:none;flex:1;}
+  .player-topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 24px;background:rgba(10,10,13,0.95);
+    border-bottom:1px solid var(--line);
+  }
+  .player-topbar h3{font-size:16px;font-weight:700;}
+  .player-topbar .sub{font-size:12.5px;color:var(--gold);margin-top:2px;font-weight:600;}
+  .player-controls-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .player-btn {
+    background: rgba(255,255,255,0.1);
+    color: var(--ink);
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s;
+  }
+  .player-btn:hover {
+    background: var(--ember);
+  }
+  .player-close{
+    width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.1);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .player-close svg{width:18px;height:18px;fill:var(--ink);}
+
+  /* ===== TOAST ===== */
+  .toast{
+    position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--ink);color:#111;padding:12px 22px;border-radius:8px;font-weight:700;font-size:13.5px;
+    opacity:0;transition:all .3s ease;z-index:900;pointer-events:none;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  @media (max-width:900px){
+    .navbar{padding:14px 20px;}
+    .nav-links{display:none;}
+    .search-wrap{width:150px;}
+    .hero-content, .row-block, .filter-bar{padding-left:20px;padding-right:20px;}
+    .hero-content{max-width:100%;}
+    .footer-grid{grid-template-columns:repeat(2,1fr);}
+    .similar-grid{grid-template-columns:repeat(2,1fr);}
+    .modal-hero-content h2{font-size:28px;}
+    .card{flex-basis:150px;height:220px;}
+    .rank-card{flex-basis:190px;height:220px;}
+    .rank-num{font-size:90px;}
+    .rank-card .card{flex-basis:130px;margin-left:55px;}
+    .ep-thumb { width: 80px; height: 50px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-left">
+    <div class="logo" onclick="resetView()" style="cursor: pointer;">
+      <span class="mark"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>SINEHUB
+    </div>
+    <ul class="nav-links">
+      <li><a href="#" class="active" data-filter="all">Home</a></li>
+      <li><a href="#" data-filter="movie">Mga Pelikula</a></li>
+      <li><a href="#" data-filter="anime">Anime</a></li>
+      <li><a href="#" data-filter="series">Series</a></li>
+      <li><a href="#" id="mylist-link">Aking Listahan</a></li>
+    </ul>
+  </div>
+  <div class="nav-right">
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="searchInput" placeholder="Maghanap ng titulo, genre...">
+    </div>
+    <div class="avatar">JV</div>
+  </div>
+</nav>
+
+<header class="hero" id="heroSection">
+  <div class="hero-bg" id="heroBg"></div>
+  <div class="hero-noise"></div>
+  <div class="hero-content">
+    <div class="hero-badge">Sinehub Featured</div>
+    <h1 class="hero-title" id="heroTitle">Naglo-load...</h1>
+    <div class="hero-meta">
+      <span class="score" id="heroScore">98% Match</span>
+      <span class="chip" id="heroYear">2026</span>
+      <span class="chip" id="heroRating">SF-16</span>
+      <span class="chip" id="heroSeasons">HD</span>
+    </div>
+    <p class="hero-desc" id="heroDesc">Nangangalap ng pinakamainit na palabas para sa iyo...</p>
+    <div class="hero-actions">
+      <button class="btn btn-play" onclick="playCurrentHero()">
+        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> I-play
+      </button>
+      <button class="btn btn-info" onclick="openCurrentHeroModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg> Impormasyon
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="rows">
+
+  <div class="filter-bar" id="filterBar">
+    <button class="pill active" data-filter="all">Lahat</button>
+    <button class="pill" data-filter="movie">Pelikula</button>
+    <button class="pill" data-filter="anime">Anime</button>
+    <button class="pill" data-filter="series">Series</button>
+    <button class="back-btn" id="backBtn" onclick="resetView()">&#8592; Bumalik sa Lahat</button>
+  </div>
+
+  <!-- TRENDING SECTION -->
+  <section class="row-block" id="sec-trending">
+    <div class="row-head">
+      <div class="row-head-left">
+        <h2 id="title-trending">Pinaka Trending Ngayon</h2>
+        <span class="row-tag" id="tag-trending">Top 10</span>
+      </div>
+      <button class="see-all-btn" id="seeall-trending" onclick="showAllSection('trending')">See All &rsaquo;</button>
+    </div>
+    <div class="row-scroll" id="row-trending"></div>
+    <div class="load-more-container" id="load-trending">
+      <button class="load-more-btn" title="Mag-load pa" onclick="loadMore('trending')">&#9660;</button>
+    </div>
+  </section>
+
+  <!-- ANIME SECTION -->
+  <section class="row-block" id="sec-anime">
+    <div class="row-head">
+      <h2 id="title-anime">Sikat na Anime</h2>
+      <button class="see-all-btn" id="seeall-anime" onclick="showAllSection('anime')">See All &rsaquo;</button>
+    </div>
+    <div class="row-scroll" id="row-anime"></div>
+    <div class="load-more-container" id="load-anime">
+      <button class="load-more-btn" title="Mag-load pa ng Anime" onclick="loadMore('anime')">&#9660;</button>
+    </div>
+  </section>
+
+  <!-- MOVIES SECTION -->
+  <section class="row-block" id="sec-movies">
+    <div class="row-head">
+      <h2 id="title-movies">Blockbuster na Pelikula</h2>
+      <button class="see-all-btn" id="seeall-movie" onclick="showAllSection('movie')">See All &rsaquo;</button>
+    </div>
+    <div class="row-scroll" id="row-movies"></div>
+    <div class="load-more-container" id="load-movies">
+      <button class="load-more-btn" title="Mag-load pa ng Pelikula" onclick="loadMore('movie')">&#9660;</button>
+    </div>
+  </section>
+
+  <!-- TV SERIES SECTION -->
+  <section class="row-block" id="sec-series">
+    <div class="row-head">
+      <h2 id="title-series">Binge-worthy TV Series</h2>
+      <button class="see-all-btn" id="seeall-series" onclick="showAllSection('series')">See All &rsaquo;</button>
+    </div>
+    <div class="row-scroll" id="row-series"></div>
+    <div class="load-more-container" id="load-series">
+      <button class="load-more-btn" title="Mag-load pa ng Series" onclick="loadMore('series')">&#9660;</button>
+    </div>
+  </section>
+
+  <!-- MY LIST SECTION -->
+  <section class="row-block" id="mylist-section" style="display:none;">
+    <div class="row-head">
+      <h2>Aking Listahan</h2>
+    </div>
+    <div class="row-scroll" id="row-mylist"></div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="footer-grid">
+    <div>
+      <a href="#">Tanong (FAQ)</a>
+      <a href="#">Sentro ng Tulong</a>
+      <a href="#">Account</a>
+    </div>
+    <div>
+      <a href="#">Mag-invite ng Kaibigan</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Use</a>
+    </div>
+  </div>
+  <p class="fine">SINEHUB <span class="version-badge">v1.3.0</span> — Showcase web portal. Ang streaming API ay para lamang sa pananaliksik at demonstrasyon.</p>
+</footer>
+
+<!-- MODAL OVERLAY -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalBox"></div>
+</div>
+
+<!-- VIDEO PLAYER MODAL -->
+<div class="player-overlay" id="playerOverlay">
+  <div class="player-topbar">
+    <div>
+      <h3 id="playerTitle">Title</h3>
+      <div class="sub" id="playerSub">Streaming Direct Feed</div>
+    </div>
+    <div class="player-controls-right">
+      <button class="player-btn" id="prevEpBtn" onclick="changeEpisode(-1)" style="display:none;">&lsaquo; Prev Ep</button>
+      <button class="player-btn" id="nextEpBtn" onclick="changeEpisode(1)" style="display:none;">Next Ep &rsaquo;</button>
+      <button class="player-close" onclick="closePlayer()" aria-label="Isara">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+  <iframe 
+    id="playerIframe" 
+    allow="autoplay; encrypted-media; fullscreen" 
+    allowfullscreen 
+    referrerpolicy="origin">
+  </iframe>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const TMDB_API_KEY = '847d91d3590d1c54d627043a35cd1a84';
+const IMAGE_BASE = 'https://image.tmdb.org/t/p/w500';
+const BACKDROP_BASE = 'https://image.tmdb.org/t/p/original';
+
+let TITLES = [];
+let byId = {};
+let myList = new Set();
+let searchTimeout = null;
+
+// CURRENT PLAYING STATE (Para sa Next/Prev buttons)
+let currentPlaying = {
+  id: null,
+  season: 1,
+  episode: 1,
+  totalEpisodesInSeason: 1
+};
+
+const currentPages = {
+  trending: 1,
+  anime: 1,
+  movie: 1,
+  series: 1
+};
+
+function updateByIdMap() {
+  byId = Object.fromEntries(TITLES.map(t => [t.id, t]));
+}
+
+/* ================= RENDER LOGIC ================= */
+function cardHTML(t){
+  const badge = t.type === 'anime' ? '<span class="card-badge badge-anime">Anime</span>'
+              : t.match >= 85 ? '<span class="card-badge badge-top">Top Pick</span>' : '';
+  
+  const posterUrl = t.poster ? `${IMAGE_BASE}${t.poster}` : 'https://via.placeholder.com/500x750?text=No+Poster';
+
+  return `
+    <div class="card" tabindex="0" onclick="openModalById('${t.id}')">
+      <div class="card-art" style="background-image: url('${posterUrl}')"></div>
+      ${badge}
+      <div class="card-body">
+        <div class="card-title">${t.title}</div>
+        <div class="card-sub">
+          <span class="match">${t.match}% Score</span>
+          <span class="dot"></span>
+          <span>${t.year}</span>
+        </div>
+      </div>
+    </div>`;
+}
+
+function rankCardHTML(t, n){
+  return `<div class="rank-card"><div class="rank-num">${n}</div>${cardHTML(t)}</div>`;
+}
+
+function renderRow(elId, list, ranked = false){
+  const el = document.getElementById(elId);
+  if(!el) return;
+  if(list.length === 0) {
+    el.innerHTML = '<p style="color:var(--ink-faint); font-size:13px;">Walang nahanap...</p>';
+    return;
+  }
+  el.innerHTML = ranked
+    ? list.map((t,i) => rankCardHTML(t, i+1)).join('')
+    : list.map(t => cardHTML(t)).join('');
+}
+
+function appendToRow(elId, newList) {
+  const el = document.getElementById(elId);
+  if(!el) return;
+  const html = newList.map(t => cardHTML(t)).join('');
+  el.insertAdjacentHTML('beforeend', html);
+  
+  if (!el.classList.contains('grid-mode')) {
+    el.scrollBy({ left: 600, behavior: 'smooth' });
+  }
+}
+
+function renderAll(){
+  renderRow('row-trending', TITLES.filter(t => t.isTrending).slice(0,10), true);
+  renderRow('row-anime', TITLES.filter(t => t.type === 'anime'));
+  renderRow('row-movies', TITLES.filter(t => t.type === 'movie'));
+  renderRow('row-series', TITLES.filter(t => t.type === 'series'));
+  renderMyList();
+}
+
+function renderMyList(){
+  const el = document.getElementById('row-mylist');
+  const list = [...myList].map(id => byId[id]).filter(Boolean);
+  document.getElementById('mylist-section').style.display = list.length ? 'block' : 'none';
+  if(el) el.innerHTML = list.map(t => cardHTML(t)).join('');
+}
+
+/* ================= MODAL & EPISODES FETCH ================= */
+async function openModalById(id){
+  const t = byId[id];
+  if(!t) return;
+  const similar = TITLES.filter(x => x.id !== id && x.type === t.type).slice(0,3);
+  const inList = myList.has(id);
+  const backdropUrl = t.backdrop ? `${BACKDROP_BASE}${t.backdrop}` : (t.poster ? `${IMAGE_BASE}${t.poster}` : '');
+
+  const isTV = (t.type === 'series' || t.type === 'anime');
+
+  document.getElementById('modalBox').innerHTML = `
+    <div class="modal-hero">
+      <div class="m-art" style="background-image: url('${backdropUrl}')"></div>
+      <button class="modal-close" onclick="closeModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div class="modal-hero-content">
+        <h2>${t.title}</h2>
+        <div class="hero-actions">
+          <button class="btn btn-play" onclick="openPlayer('${t.id}', 1, 1)">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Panoorin
+          </button>
+          <button class="btn btn-info" onclick="toggleList('${id}')" id="listBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            ${inList ? 'Nasa Listahan' : 'Idagdag sa Listahan'}
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-meta">
+        <span class="match">${t.match}% Rating</span>
+        <span>${t.year}</span>
+        <span class="chip">${t.type.toUpperCase()}</span>
+      </div>
+      <p class="modal-desc">${t.desc}</p>
+
+      ${isTV ? `
+        <div class="episodes-section">
+          <div class="episodes-header">
+            <h3>Mga Episode</h3>
+            <select class="season-select" id="seasonSelect" onchange="loadSeasonEpisodes('${t.tmdbId}', '${t.id}', this.value)">
+              <option value="">Naglo-load ng Season...</option>
+            </select>
+          </div>
+          <div class="episodes-grid" id="episodesList">
+            <p style="color:var(--ink-faint); font-size:13px;">Kumukuha ng mga episode...</p>
+          </div>
+        </div>
+      ` : ''}
+
+      <div class="modal-similar">
+        <h3>Mungkahi para sa Iyo</h3>
+        <div class="similar-grid">
+          ${similar.map(s => `
+            <div class="sim-card" onclick="openModalById('${s.id}')" style="background-image: url('${s.backdrop ? BACKDROP_BASE + s.backdrop : IMAGE_BASE + s.poster}')">
+              <span>${s.title}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById('modalOverlay').classList.add('open');
+
+  if (isTV) {
+    fetchTVDetails(t.tmdbId, t.id);
+  }
+}
+
+async function fetchTVDetails(tmdbId, id) {
+  try {
+    const res = await fetch(`https://api.themoviedb.org/3/tv/${tmdbId}?api_key=${TMDB_API_KEY}`);
+    const tv = await res.json();
+    
+    const seasonSelect = document.getElementById('seasonSelect');
+    if (!seasonSelect) return;
+
+    const validSeasons = (tv.seasons || []).filter(s => s.season_number > 0);
+    
+    seasonSelect.innerHTML = validSeasons.map(s => `
+      <option value="${s.season_number}">${s.name} (${s.episode_count} Episodes)</option>
+    `).join('');
+
+    if (validSeasons.length > 0) {
+      loadSeasonEpisodes(tmdbId, id, validSeasons[0].season_number);
+    } else {
+      document.getElementById('episodesList').innerHTML = '<p style="color:var(--ink-faint);">Walang nahanap na Season.</p>';
+    }
+  } catch (err) {
+    console.error('Error fetching TV details:', err);
+  }
+}
+
+async function loadSeasonEpisodes(tmdbId, id, seasonNum) {
+  const listEl = document.getElementById('episodesList');
+  if (!listEl) return;
+
+  listEl.innerHTML = '<p style="color:var(--ink-faint); font-size:13px;">Naglo-load ng episodes...</p>';
+
+  try {
+    const res = await fetch(`https://api.themoviedb.org/3/tv/${tmdbId}/season/${seasonNum}?api_key=${TMDB_API_KEY}`);
+    const sData = await res.json();
+
+    if (!sData.episodes || sData.episodes.length === 0) {
+      listEl.innerHTML = '<p style="color:var(--ink-faint); font-size:13px;">Walang episode na nahanap.</p>';
+      return;
+    }
+
+    listEl.innerHTML = sData.episodes.map(ep => {
+      const stillUrl = ep.still_path ? `${IMAGE_BASE}${ep.still_path}` : 'https://via.placeholder.com/300x170?text=No+Image';
+      return `
+        <div class="ep-card" onclick="openPlayer('${id}', ${seasonNum}, ${ep.episode_number}, ${sData.episodes.length})">
+          <div class="ep-num">${ep.episode_number}</div>
+          <div class="ep-thumb" style="background-image: url('${stillUrl}')"></div>
+          <div class="ep-info">
+            <div class="ep-title">${ep.name}</div>
+            <div class="ep-overview">${ep.overview || 'Walang paglalarawan.'}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+  } catch (err) {
+    listEl.innerHTML = '<p style="color:var(--ink-faint); font-size:13px;">Nagka-error sa pag-load ng episodes.</p>';
+  }
+}
+
+function closeModal(){
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+document.getElementById('modalOverlay').addEventListener('click', e => {
+  if(e.target.id === 'modalOverlay') closeModal();
+});
+
+function toggleList(id){
+  if(myList.has(id)){ myList.delete(id); showToast('Inalis sa Listahan'); }
+  else { myList.add(id); showToast('Idinagdag sa Listahan'); }
+  renderMyList();
+  const btn = document.getElementById('listBtn');
+  if(btn) btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> ${myList.has(id) ? 'Nasa Listahan' : 'Idagdag sa Listahan'}`;
+}
+
+let toastTimer;
+function showToast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
+}
+
+/* ================= STREAMING PLAYER SETUP ================= */
+function openPlayer(id, season = 1, episode = 1, totalEpInSeason = 24){
+  const t = byId[id];
+  if(!t) return;
+
+  currentPlaying = {
+    id: id,
+    season: season,
+    episode: episode,
+    totalEpisodesInSeason: totalEpInSeason
+  };
+
+  const isTV = (t.type === 'series' || t.type === 'anime');
+
+  document.getElementById('playerTitle').textContent = t.title;
+  document.getElementById('playerSub').textContent = isTV 
+    ? `Season ${season} — Episode ${episode}` 
+    : 'Full Movie Stream';
+
+  const nextBtn = document.getElementById('nextEpBtn');
+  const prevBtn = document.getElementById('prevEpBtn');
+
+  if (isTV) {
+    nextBtn.style.display = 'inline-flex';
+    prevBtn.style.display = 'inline-flex';
+  } else {
+    nextBtn.style.display = 'none';
+    prevBtn.style.display = 'none';
+  }
+
+  let embedUrl = "";
+  if (t.type === 'movie') {
+    embedUrl = `https://vidsrc.me/embed/movie?tmdb=${t.tmdbId}`;
+  } else {
+    embedUrl = `https://vidsrc.me/embed/tv?tmdb=${t.tmdbId}&season=${season}&episode=${episode}`;
+  }
+
+  document.getElementById('playerIframe').src = embedUrl;
+  document.getElementById('playerOverlay').classList.add('open');
+  closeModal();
+}
+
+function changeEpisode(direction) {
+  const newEp = currentPlaying.episode + direction;
+  if (newEp < 1) {
+    showToast('Ito na ang unang episode.');
+    return;
+  }
+  openPlayer(currentPlaying.id, currentPlaying.season, newEp, currentPlaying.totalEpisodesInSeason);
+}
+
+function closePlayer(){
+  document.getElementById('playerIframe').src = '';
+  document.getElementById('playerOverlay').classList.remove('open');
+}
+
+/* ================= HERO ROTATION ================= */
+let heroIdx = 0;
+function updateHeroDisplay(t) {
+  if(!t) return;
+  document.getElementById('heroTitle').textContent = t.title;
+  document.getElementById('heroDesc').textContent = t.desc;
+  document.getElementById('heroScore').textContent = `${t.match}% Score`;
+  document.getElementById('heroYear').textContent = t.year;
+  document.getElementById('heroSeasons').textContent = t.type.toUpperCase();
+
+  const bg = t.backdrop ? `${BACKDROP_BASE}${t.backdrop}` : `${IMAGE_BASE}${t.poster}`;
+  document.getElementById('heroBg').style.backgroundImage = `url('${bg}')`;
+}
+
+function rotateHero(){
+  if(!TITLES.length) return;
+  heroIdx = (heroIdx + 1) % Math.min(TITLES.length, 5);
+  updateHeroDisplay(TITLES[heroIdx]);
+}
+
+function playCurrentHero() {
+  if(TITLES[heroIdx]) openPlayer(TITLES[heroIdx].id, 1, 1);
+}
+
+function openCurrentHeroModal() {
+  if(TITLES[heroIdx]) openModalById(TITLES[heroIdx].id);
+}
+
+setInterval(rotateHero, 8000);
+
+/* ================= API INTEGRATIONS ================= */
+async function fetchAllData() {
+  try {
+    const resMovies = await fetch(`https://api.themoviedb.org/3/trending/movie/week?api_key=${TMDB_API_KEY}&page=1`);
+    const dataMovies = await resMovies.json();
+    
+    const resAnime = await fetch(`https://api.themoviedb.org/3/discover/tv?api_key=${TMDB_API_KEY}&with_genres=16&with_original_language=ja&sort_by=popularity.desc&page=1`);
+    const dataAnime = await resAnime.json();
+
+    const resSeries = await fetch(`https://api.themoviedb.org/3/trending/tv/week?api_key=${TMDB_API_KEY}&page=1`);
+    const dataSeries = await resSeries.json();
+
+    const formattedMovies = (dataMovies.results || []).map(item => transformTMDB(item, 'movie', true));
+    const formattedAnime = (dataAnime.results || []).map(item => transformTMDB(item, 'anime'));
+    const formattedSeries = (dataSeries.results || []).filter(s => !formattedAnime.some(a => a.tmdbId === s.id)).map(item => transformTMDB(item, 'series'));
+
+    TITLES = [...formattedMovies, ...formattedAnime, ...formattedSeries];
+    updateByIdMap();
+    renderAll();
+
+    if(TITLES.length > 0) updateHeroDisplay(TITLES[0]);
+  } catch(err) {
+    console.error('Error fetching data:', err);
+  }
+}
+
+function transformTMDB(item, category, isTrending = false) {
+  return {
+    id: `${category}-${item.id}`,
+    tmdbId: item.id,
+    title: item.title || item.name,
+    type: category,
+    isTrending: isTrending,
+    year: new Date(item.release_date || item.first_air_date || Date.now()).getFullYear(),
+    match: Math.round((item.vote_average || 7) * 10),
+    poster: item.poster_path,
+    backdrop: item.backdrop_path,
+    desc: item.overview || 'Walang magagamit na buod sa kasalukuyan.'
+  };
+}
+
+/* ================= LOAD MORE & SEE ALL LOGIC ================= */
+async function loadMore(category) {
+  currentPages[category]++;
+  const page = currentPages[category];
+  let endpoint = '';
+
+  if (category === 'trending') {
+    endpoint = `https://api.themoviedb.org/3/trending/all/week?api_key=${TMDB_API_KEY}&page=${page}`;
+  } else if (category === 'anime') {
+    endpoint = `https://api.themoviedb.org/3/discover/tv?api_key=${TMDB_API_KEY}&with_genres=16&with_original_language=ja&sort_by=popularity.desc&page=${page}`;
+  } else if (category === 'movie') {
+    endpoint = `https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_API_KEY}&page=${page}`;
+  } else if (category === 'series') {
+    endpoint = `https://api.themoviedb.org/3/tv/popular?api_key=${TMDB_API_KEY}&page=${page}`;
+  }
+
+  try {
+    const res = await fetch(endpoint);
+    const data = await res.json();
+    if (data.results) {
+      const type = category === 'trending' ? 'movie' : category;
+      const newItems = data.results.map(item => transformTMDB(item, type, category === 'trending'));
+      
+      TITLES.push(...newItems);
+      updateByIdMap();
+
+      const targetRowId = category === 'trending' ? 'row-trending' : `row-${category === 'movie' ? 'movies' : category}`;
+      appendToRow(targetRowId, newItems);
+      showToast(`Nag-load ng karagdagang ${category.toUpperCase()}...`);
+    }
+  } catch (err) {
+    console.error(`Error loading more ${category}:`, err);
+  }
+}
+
+function showAllSection(category) {
+  const sections = ['trending', 'anime', 'movies', 'series'];
+  const targetSecId = category === 'movie' ? 'movies' : category;
+
+  sections.forEach(sec => {
+    const el = document.getElementById(`sec-${sec}`);
+    if (el) el.style.display = (sec === targetSecId) ? 'block' : 'none';
+  });
+
+  const rowEl = document.getElementById(`row-${targetSecId}`);
+  if (rowEl) rowEl.classList.add('grid-mode');
+
+  const seeAllBtn = document.getElementById(`seeall-${category}`);
+  if (seeAllBtn) seeAllBtn.style.display = 'none';
+
+  document.getElementById('backBtn').style.display = 'inline-block';
+
+  loadMore(category);
+  loadMore(category);
+
+  document.getElementById(`sec-${targetSecId}`).scrollIntoView({ behavior: 'smooth' });
+}
+
+function resetView() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  const sections = ['trending', 'anime', 'movies', 'series'];
+  sections.forEach(sec => {
+    const secEl = document.getElementById(`sec-${sec}`);
+    if (secEl) secEl.style.display = 'block';
+
+    const rowEl = document.getElementById(`row-${sec}`);
+    if (rowEl) rowEl.classList.remove('grid-mode');
+  });
+
+  document.getElementById('title-trending').textContent = 'Pinaka Trending Ngayon';
+  document.getElementById('tag-trending').textContent = 'Top 10';
+
+  document.querySelectorAll('.see-all-btn').forEach(btn => btn.style.display = 'inline-block');
+  document.getElementById('backBtn').style.display = 'none';
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  document.querySelector('.pill[data-filter="all"]').classList.add('active');
+  
+  const searchInput = document.getElementById('searchInput');
+  if(searchInput) searchInput.value = '';
+
+  renderAll();
+}
+
+/* ================= FILTERS & SEARCH ================= */
+document.querySelectorAll('.pill, .nav-links a[data-filter]').forEach(btn => {
+  btn.addEventListener('click', e => {
+    e.preventDefault();
+    const f = btn.dataset.filter;
+    document.querySelectorAll('.pill').forEach(p => p.classList.toggle('active', p.dataset.filter === f));
+    applyFilter(f);
+  });
+});
+
+function applyFilter(f){
+  if(f === 'all'){ resetView(); return; }
+  showAllSection(f);
+}
+
+/* REAL-TIME TMDB DATABASE SEARCH */
+document.getElementById('searchInput').addEventListener('input', e => {
+  const q = e.target.value.trim();
+
+  if (!q) {
+    resetView();
+    return;
+  }
+
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    searchTMDB(q);
+  }, 400);
+});
+
+async function searchTMDB(query) {
+  try {
+    const res = await fetch(`https://api.themoviedb.org/3/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}&page=1`);
+    const data = await res.json();
+
+    if (data.results && data.results.length > 0) {
+      const searchResults = data.results
+        .filter(item => item.media_type === 'movie' || item.media_type === 'tv')
+        .map(item => {
+          const isAnime = item.genre_ids?.includes(16) && item.original_language === 'ja';
+          const type = item.media_type === 'movie' ? 'movie' : (isAnime ? 'anime' : 'series');
+          return transformTMDB(item, type);
+        });
+
+      TITLES.push(...searchResults);
+      updateByIdMap();
+
+      document.querySelectorAll('.row-block').forEach((rb, i) => { 
+        rb.style.display = i === 0 ? 'block' : 'none'; 
+      });
+
+      document.getElementById('title-trending').textContent = `Mga Resulta para sa "${query}"`;
+      document.getElementById('tag-trending').textContent = `${searchResults.length} Nahanap`;
+      
+      const rowTrending = document.getElementById('row-trending');
+      rowTrending.classList.add('grid-mode');
+      
+      renderRow('row-trending', searchResults, false);
+    } else {
+      renderRow('row-trending', [], false);
+      document.getElementById('title-trending').textContent = `Walang nahanap na "${query}"`;
+    }
+  } catch (err) {
+    console.error('Error sa paghahanap:', err);
+  }
+}
+
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
+});
+
+fetchAllData();
+</script>
+</body>
+</html>
