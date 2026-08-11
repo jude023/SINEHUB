@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fil">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SINEHUB — Panoorin Nang Walang Katapusan</title>
+<title>SINEHUB — Stream Unlimited Movies & Shows</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -532,10 +532,10 @@
     </div>
     <ul class="nav-links">
       <li><a href="#" class="active" data-filter="all">Home</a></li>
-      <li><a href="#" data-filter="movie">Mga Pelikula</a></li>
+      <li><a href="#" data-filter="movie">Movies</a></li>
       <li><a href="#" data-filter="anime">Anime</a></li>
-      <li><a href="#" data-filter="series">Series</a></li>
-      <li><a href="#" id="mylist-link">Aking Listahan</a></li>
+      <li><a href="#" data-filter="series">TV Series</a></li>
+      <li><a href="#" id="mylist-link">My List</a></li>
     </ul>
   </div>
   <div class="nav-right">
@@ -549,7 +549,7 @@
 
     <div class="search-wrap">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" id="searchInput" placeholder="Maghanap ng titulo, genre...">
+      <input type="text" id="searchInput" placeholder="Search title, genre...">
     </div>
     <div class="avatar">JV</div>
   </div>
@@ -560,20 +560,20 @@
   <div class="hero-noise"></div>
   <div class="hero-content">
     <div class="hero-badge">Sinehub Featured</div>
-    <h1 class="hero-title" id="heroTitle">Naglo-load...</h1>
+    <h1 class="hero-title" id="heroTitle">Loading...</h1>
     <div class="hero-meta">
       <span class="score" id="heroScore">98% Match</span>
       <span class="chip" id="heroYear">2026</span>
       <span class="chip" id="heroRating">SF-16</span>
       <span class="chip" id="heroSeasons">HD</span>
     </div>
-    <p class="hero-desc" id="heroDesc">Nangangalap ng pinakamainit na palabas para sa iyo...</p>
+    <p class="hero-desc" id="heroDesc">Fetching the trending titles for you...</p>
     <div class="hero-actions">
       <button class="btn btn-play" onclick="playCurrentHero()">
-        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> I-play
+        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Play
       </button>
       <button class="btn btn-info" onclick="openCurrentHeroModal()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg> Impormasyon
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg> More Info
       </button>
     </div>
   </div>
@@ -582,68 +582,68 @@
 <main class="rows">
 
   <div class="filter-bar" id="filterBar">
-    <button class="pill active" data-filter="all">Lahat</button>
-    <button class="pill" data-filter="movie">Pelikula</button>
+    <button class="pill active" data-filter="all">All</button>
+    <button class="pill" data-filter="movie">Movies</button>
     <button class="pill" data-filter="anime">Anime</button>
-    <button class="pill" data-filter="series">Series</button>
-    <button class="back-btn" id="backBtn" onclick="resetView()">&#8592; Bumalik sa Lahat</button>
+    <button class="pill" data-filter="series">TV Series</button>
+    <button class="back-btn" id="backBtn" onclick="resetView()">&#8592; Back to All</button>
   </div>
 
   <!-- TRENDING SECTION -->
   <section class="row-block" id="sec-trending">
     <div class="row-head">
       <div class="row-head-left">
-        <h2 id="title-trending">Pinaka Trending Ngayon</h2>
+        <h2 id="title-trending">Trending Now</h2>
         <span class="row-tag" id="tag-trending">Top 10</span>
       </div>
       <button class="see-all-btn" id="seeall-trending" onclick="showAllSection('trending')">See All &rsaquo;</button>
     </div>
     <div class="row-scroll" id="row-trending"></div>
     <div class="load-more-container" id="load-trending">
-      <button class="load-more-btn" title="Mag-load pa" onclick="loadMore('trending')">&#9660;</button>
+      <button class="load-more-btn" title="Load More" onclick="loadMore('trending')">&#9660;</button>
     </div>
   </section>
 
   <!-- ANIME SECTION -->
   <section class="row-block" id="sec-anime">
     <div class="row-head">
-      <h2 id="title-anime">Sikat na Anime</h2>
+      <h2 id="title-anime">Popular Anime</h2>
       <button class="see-all-btn" id="seeall-anime" onclick="showAllSection('anime')">See All &rsaquo;</button>
     </div>
     <div class="row-scroll" id="row-anime"></div>
     <div class="load-more-container" id="load-anime">
-      <button class="load-more-btn" title="Mag-load pa ng Anime" onclick="loadMore('anime')">&#9660;</button>
+      <button class="load-more-btn" title="Load More Anime" onclick="loadMore('anime')">&#9660;</button>
     </div>
   </section>
 
   <!-- MOVIES SECTION -->
   <section class="row-block" id="sec-movies">
     <div class="row-head">
-      <h2 id="title-movies">Blockbuster na Pelikula</h2>
+      <h2 id="title-movies">Blockbuster Movies</h2>
       <button class="see-all-btn" id="seeall-movie" onclick="showAllSection('movie')">See All &rsaquo;</button>
     </div>
     <div class="row-scroll" id="row-movies"></div>
     <div class="load-more-container" id="load-movies">
-      <button class="load-more-btn" title="Mag-load pa ng Pelikula" onclick="loadMore('movie')">&#9660;</button>
+      <button class="load-more-btn" title="Load More Movies" onclick="loadMore('movie')">&#9660;</button>
     </div>
   </section>
 
   <!-- TV SERIES SECTION -->
   <section class="row-block" id="sec-series">
     <div class="row-head">
-      <h2 id="title-series">Binge-worthy TV Series</h2>
+      <h2 id="title-series">Binge-Worthy TV Series</h2>
       <button class="see-all-btn" id="seeall-series" onclick="showAllSection('series')">See All &rsaquo;</button>
     </div>
     <div class="row-scroll" id="row-series"></div>
     <div class="load-more-container" id="load-series">
-      <button class="load-more-btn" title="Mag-load pa ng Series" onclick="loadMore('series')">&#9660;</button>
+      <button class="load-more-btn" title="Load More Series" onclick="loadMore('series')">&#9660;</button>
     </div>
   </section>
 
   <!-- MY LIST SECTION -->
   <section class="row-block" id="mylist-section" style="display:none;">
     <div class="row-head">
-      <h2>Aking Listahan</h2>
+      <h2>My List</h2>
     </div>
     <div class="row-scroll" id="row-mylist"></div>
   </section>
@@ -653,17 +653,17 @@
 <footer>
   <div class="footer-grid">
     <div>
-      <a href="#">Tanong (FAQ)</a>
-      <a href="#">Sentro ng Tulong</a>
+      <a href="#">FAQ</a>
+      <a href="#">Help Center</a>
       <a href="#">Account</a>
     </div>
     <div>
-      <a href="#">Mag-invite ng Kaibigan</a>
+      <a href="#">Invite Friends</a>
       <a href="#">Privacy Policy</a>
       <a href="#">Terms of Use</a>
     </div>
   </div>
-  <p class="fine">SINEHUB <span class="version-badge">v1.3.2</span> — Showcase web portal. Ang streaming API ay para lamang sa pananaliksik at demonstrasyon.</p>
+  <p class="fine">SINEHUB <span class="version-badge">v1.3.1</span> — Showcase web portal. Streaming API is for research and demonstration purposes only.</p>
 </footer>
 
 <!-- MODAL OVERLAY -->
@@ -681,7 +681,7 @@
     <div class="player-controls-right">
       <button class="player-btn" id="prevEpBtn" onclick="changeEpisode(-1)" style="display:none;">&lsaquo; Prev Ep</button>
       <button class="player-btn" id="nextEpBtn" onclick="changeEpisode(1)" style="display:none;">Next Ep &rsaquo;</button>
-      <button class="player-close" onclick="closePlayer()" aria-label="Isara">
+      <button class="player-close" onclick="closePlayer()" aria-label="Close">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
@@ -725,30 +725,16 @@ function activateVIP() {
   const input = document.getElementById("vipKeyInput");
   if (!input) return;
 
-  const userKey = input.value.trim().toUpperCase(); // Naka-upper case para hindi maging sensitive sa malaki/maliit na letra
+  const userKey = input.value.trim().toUpperCase();
 
-  // Titignan kung kasama ang in-input na key sa ating Array ng valid keys
   if (VALID_VIP_KEYS.includes(userKey)) {
     localStorage.setItem("sinehub_vip_user", "true");
     showToast("VIP Successfully Activated! Ads disabled.");
     checkVIPStatus();
   } else {
-    showToast("Maling VIP Key! Paki-subukan ulit.");
+    showToast("Invalid VIP Key! Please try again.");
   }
 }
-// function activateVIP() {
-//   const input = document.getElementById("vipKeyInput");
-//   if (!input) return;
-
-//   const userKey = input.value.trim();
-//   if (userKey === VALID_VIP_KEY) {
-//     localStorage.setItem("sinehub_vip_user", "true");
-//     showToast("VIP Successfully Activated! Ads disabled.");
-//     checkVIPStatus();
-//   } else {
-//     showToast("Maling VIP Key! Paki-subukan ulit.");
-//   }
-// }
 
 function removeAdsterraScripts() {
   const scripts = document.querySelectorAll("script");
@@ -772,7 +758,7 @@ let byId = {};
 let myList = new Set();
 let searchTimeout = null;
 
-// CURRENT PLAYING STATE (Para sa Next/Prev buttons)
+// CURRENT PLAYING STATE (For Next/Prev buttons)
 let currentPlaying = {
   id: null,
   season: 1,
@@ -821,7 +807,7 @@ function renderRow(elId, list, ranked = false){
   const el = document.getElementById(elId);
   if(!el) return;
   if(list.length === 0) {
-    el.innerHTML = '<p style="color:var(--ink-faint); font-size:13px;">Walang nahanap...</p>';
+    el.innerHTML = '<p style="color:var(--ink-faint); font-size:13px;">No results found...</p>';
     return;
   }
   el.innerHTML = ranked
@@ -875,11 +861,11 @@ async function openModalById(id){
         <h2>${t.title}</h2>
         <div class="hero-actions">
           <button class="btn btn-play" onclick="openPlayer('${t.id}', 1, 1)">
-            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Panoorin
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Watch
           </button>
           <button class="btn btn-info" onclick="toggleList('${id}')" id="listBtn">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            ${inList ? 'Nasa Listahan' : 'Idagdag sa Listahan'}
+            ${inList ? 'In My List' : 'Add to My List'}
           </button>
         </div>
       </div>
@@ -895,19 +881,19 @@ async function openModalById(id){
       ${isTV ? `
         <div class="episodes-section">
           <div class="episodes-header">
-            <h3>Mga Episode</h3>
+            <h3>Episodes</h3>
             <select class="season-select" id="seasonSelect" onchange="loadSeasonEpisodes('${t.tmdbId}', '${t.id}', this.value)">
-              <option value="">Naglo-load ng Season...</option>
+              <option value="">Loading Seasons...</option>
             </select>
           </div>
           <div class="episodes-grid" id="episodesList">
-            <p style="color:var(--ink-faint); font-size:13px;">Kumukuha ng mga episode...</p>
+            <p style="color:var(--ink-faint); font-size:13px;">Fetching episodes...</p>
           </div>
         </div>
       ` : ''}
 
       <div class="modal-similar">
-        <h3>Mungkahi para sa Iyo</h3>
+        <h3>Recommended for You</h3>
         <div class="similar-grid">
           ${similar.map(s => `
             <div class="sim-card" onclick="openModalById('${s.id}')" style="background-image: url('${s.backdrop ? BACKDROP_BASE + s.backdrop : IMAGE_BASE + s.poster}')">
@@ -942,7 +928,7 @@ async function fetchTVDetails(tmdbId, id) {
     if (validSeasons.length > 0) {
       loadSeasonEpisodes(tmdbId, id, validSeasons[0].season_number);
     } else {
-      document.getElementById('episodesList').innerHTML = '<p style="color:var(--ink-faint);">Walang nahanap na Season.</p>';
+      document.getElementById('episodesList').innerHTML = '<p style="color:var(--ink-faint);">No Seasons found.</p>';
     }
   } catch (err) {
     console.error('Error fetching TV details:', err);
@@ -953,14 +939,14 @@ async function loadSeasonEpisodes(tmdbId, id, seasonNum) {
   const listEl = document.getElementById('episodesList');
   if (!listEl) return;
 
-  listEl.innerHTML = '<p style="color:var(--ink-faint); font-size:13px;">Naglo-load ng episodes...</p>';
+  listEl.innerHTML = '<p style="color:var(--ink-faint); font-size:13px;">Loading episodes...</p>';
 
   try {
     const res = await fetch(`https://api.themoviedb.org/3/tv/${tmdbId}/season/${seasonNum}?api_key=${TMDB_API_KEY}`);
     const sData = await res.json();
 
     if (!sData.episodes || sData.episodes.length === 0) {
-      listEl.innerHTML = '<p style="color:var(--ink-faint); font-size:13px;">Walang episode na nahanap.</p>';
+      listEl.innerHTML = '<p style="color:var(--ink-faint); font-size:13px;">No episodes found.</p>';
       return;
     }
 
@@ -972,14 +958,14 @@ async function loadSeasonEpisodes(tmdbId, id, seasonNum) {
           <div class="ep-thumb" style="background-image: url('${stillUrl}')"></div>
           <div class="ep-info">
             <div class="ep-title">${ep.name}</div>
-            <div class="ep-overview">${ep.overview || 'Walang paglalarawan.'}</div>
+            <div class="ep-overview">${ep.overview || 'No overview available.'}</div>
           </div>
         </div>
       `;
     }).join('');
 
   } catch (err) {
-    listEl.innerHTML = '<p style="color:var(--ink-faint); font-size:13px;">Nagka-error sa pag-load ng episodes.</p>';
+    listEl.innerHTML = '<p style="color:var(--ink-faint); font-size:13px;">Error loading episodes.</p>';
   }
 }
 
@@ -991,11 +977,11 @@ document.getElementById('modalOverlay').addEventListener('click', e => {
 });
 
 function toggleList(id){
-  if(myList.has(id)){ myList.delete(id); showToast('Inalis sa Listahan'); }
-  else { myList.add(id); showToast('Idinagdag sa Listahan'); }
+  if(myList.has(id)){ myList.delete(id); showToast('Removed from My List'); }
+  else { myList.add(id); showToast('Added to My List'); }
   renderMyList();
   const btn = document.getElementById('listBtn');
-  if(btn) btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> ${myList.has(id) ? 'Nasa Listahan' : 'Idagdag sa Listahan'}`;
+  if(btn) btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> ${myList.has(id) ? 'In My List' : 'Add to My List'}`;
 }
 
 let toastTimer;
@@ -1052,7 +1038,7 @@ function openPlayer(id, season = 1, episode = 1, totalEpInSeason = 24){
 function changeEpisode(direction) {
   const newEp = currentPlaying.episode + direction;
   if (newEp < 1) {
-    showToast('Ito na ang unang episode.');
+    showToast('This is the first episode.');
     return;
   }
   openPlayer(currentPlaying.id, currentPlaying.season, newEp, currentPlaying.totalEpisodesInSeason);
@@ -1130,7 +1116,7 @@ function transformTMDB(item, category, isTrending = false) {
     match: Math.round((item.vote_average || 7) * 10),
     poster: item.poster_path,
     backdrop: item.backdrop_path,
-    desc: item.overview || 'Walang magagamit na buod sa kasalukuyan.'
+    desc: item.overview || 'No synopsis available at the moment.'
   };
 }
 
@@ -1162,7 +1148,7 @@ async function loadMore(category) {
 
       const targetRowId = category === 'trending' ? 'row-trending' : `row-${category === 'movie' ? 'movies' : category}`;
       appendToRow(targetRowId, newItems);
-      showToast(`Nag-load ng karagdagang ${category.toUpperCase()}...`);
+      showToast(`Loaded more ${category.toUpperCase()}...`);
     }
   } catch (err) {
     console.error(`Error loading more ${category}:`, err);
@@ -1204,7 +1190,7 @@ function resetView() {
     if (rowEl) rowEl.classList.remove('grid-mode');
   });
 
-  document.getElementById('title-trending').textContent = 'Pinaka Trending Ngayon';
+  document.getElementById('title-trending').textContent = 'Trending Now';
   document.getElementById('tag-trending').textContent = 'Top 10';
 
   document.querySelectorAll('.see-all-btn').forEach(btn => btn.style.display = 'inline-block');
@@ -1269,8 +1255,8 @@ async function searchTMDB(query) {
         rb.style.display = i === 0 ? 'block' : 'none'; 
       });
 
-      document.getElementById('title-trending').textContent = `Mga Resulta para sa "${query}"`;
-      document.getElementById('tag-trending').textContent = `${searchResults.length} Nahanap`;
+      document.getElementById('title-trending').textContent = `Results for "${query}"`;
+      document.getElementById('tag-trending').textContent = `${searchResults.length} Found`;
       
       const rowTrending = document.getElementById('row-trending');
       rowTrending.classList.add('grid-mode');
@@ -1278,10 +1264,10 @@ async function searchTMDB(query) {
       renderRow('row-trending', searchResults, false);
     } else {
       renderRow('row-trending', [], false);
-      document.getElementById('title-trending').textContent = `Walang nahanap na "${query}"`;
+      document.getElementById('title-trending').textContent = `No results found for "${query}"`;
     }
   } catch (err) {
-    console.error('Error sa paghahanap:', err);
+    console.error('Error during search:', err);
   }
 }
 
