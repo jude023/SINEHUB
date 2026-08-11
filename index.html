@@ -581,6 +581,11 @@
 
 <main class="rows">
 
+  <!-- NATIVE BANNER ADSTERRA SECTION -->
+  <div id="adsterra-banner-container" style="text-align: center; margin: 25px 0 10px 0;">
+    <div id="container-e5de4f822ecb95bc3718b0887118fc7c"></div>
+  </div>
+
   <div class="filter-bar" id="filterBar">
     <button class="pill active" data-filter="all">All</button>
     <button class="pill" data-filter="movie">Movies</button>
@@ -663,7 +668,7 @@
       <a href="#">Terms of Use</a>
     </div>
   </div>
-  <p class="fine">SINEHUB <span class="version-badge">v1.3.1</span> — Showcase web portal. Streaming API is for research and demonstration purposes only.</p>
+  <p class="fine">SINEHUB <span class="version-badge">v1.3.2</span> — Showcase web portal. Streaming API is for research and demonstration purposes only.</p>
 </footer>
 
 <!-- MODAL OVERLAY -->
@@ -708,16 +713,20 @@ const VALID_VIP_KEYS = [
 function checkVIPStatus() {
   const isVIP = localStorage.getItem("sinehub_vip_user");
   const container = document.getElementById("vip-container");
-  const adBlock = document.getElementById("adsterra-banner-container");
 
   if (isVIP === "true") {
     if (container) {
       container.innerHTML = `<span class="vip-badge-active">★ VIP MEMBER</span>`;
     }
-    if (adBlock) {
-      adBlock.style.display = "none";
-    }
-    removeAdsterraScripts();
+    const bannerContainer = document.getElementById("adsterra-banner-container");
+    if (bannerContainer) bannerContainer.style.display = "none";
+  } else {
+    // Load Banner Script only if Not VIP
+    let bannerScript = document.createElement('script');
+    bannerScript.async = true;
+    bannerScript.dataset.cfasync = "false";
+    bannerScript.src = "https://pl30793941.effectivecpmnetwork.com/e5de4f822ecb95bc3718b0887118fc7c/invoke.js";
+    document.body.appendChild(bannerScript);
   }
 }
 
@@ -736,15 +745,6 @@ function activateVIP() {
   }
 }
 
-function removeAdsterraScripts() {
-  const scripts = document.querySelectorAll("script");
-  scripts.forEach(script => {
-    if (script.src && (script.src.includes("pvnnr.com") || script.src.includes("effectivecpmnetwork.com"))) {
-      script.remove();
-    }
-  });
-}
-
 document.addEventListener("DOMContentLoaded", () => {
   checkVIPStatus();
 });
@@ -758,7 +758,6 @@ let byId = {};
 let myList = new Set();
 let searchTimeout = null;
 
-// CURRENT PLAYING STATE (For Next/Prev buttons)
 let currentPlaying = {
   id: null,
   season: 1,
@@ -1278,33 +1277,14 @@ window.addEventListener('scroll', () => {
 fetchAllData();
 </script>
 
-  <!-- Adsterra Popunder Script -->
+  <!-- ADSTERRA ANTI-ADBLOCK POPUNDER SCRIPT -->
   <script type="text/javascript">
     if (localStorage.getItem("sinehub_vip_user") !== "true") {
-      let script1 = document.createElement('script');
-      script1.src = "//pl25881423.pvnnr.com/6c/be/81/6cbe81f9b360b093375b4dbb6b15e478.js";
-      document.body.appendChild(script1);
-
-      let script2 = document.createElement('script');
-      script2.src = "https://pl30791855.effectivecpmnetwork.com/3f/ea/af/3feaafce0073904a81164f7dea258294.js";
-      document.body.appendChild(script2);
+      let antiAdblockScript = document.createElement('script');
+      antiAdblockScript.src = "https://embargotechniquebattle.com/3f/ea/af/3feaafce0073904a81164f7dea258294.js";
+      document.body.appendChild(antiAdblockScript);
     }
   </script>
 
-  <!-- Native Banner Adsterra -->
-  <div id="adsterra-banner-container" style="text-align: center; margin: 15px 0;">
-    <script type="text/javascript">
-      if (localStorage.getItem("sinehub_vip_user") !== "true") {
-        let bannerScript = document.createElement('script');
-        bannerScript.async = true;
-        bannerScript.dataset.cfasync = "false";
-        bannerScript.src = "https://pl30793941.effectivecpmnetwork.com/e5de4f822ecb95bc3718b0887118fc7c/invoke.js";
-        document.body.appendChild(bannerScript);
-      } else {
-        document.getElementById("adsterra-banner-container").style.display = "none";
-      }
-    </script>
-    <div id="container-e5de4f822ecb95bc3718b0887118fc7c"></div>
-  </div>
 </body>
 </html>
