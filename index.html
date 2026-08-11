@@ -794,12 +794,12 @@
     
     <!-- CATALOG DROPDOWN FILTERS & SORT BY -->
     <div class="catalog-select-group">
-      <select class="catalog-select" id="sortSelect" onchange="handleSortChange()">
+      <!-- <select class="catalog-select" id="sortSelect" onchange="handleSortChange()">
         <option value="popularity.desc">Sort: Popularity</option>
         <option value="primary_release_date.desc">Sort: Release Date (Newest)</option>
         <option value="primary_release_date.asc">Sort: Release Date (Oldest)</option>
         <option value="vote_average.desc">Sort: Highest Rated</option>
-      </select>
+      </select> -->
 
       <select class="catalog-select" id="genreSelect" onchange="handleCatalogFilter()">
         <option value="">All Genres</option>
@@ -1210,7 +1210,6 @@ function renderContinueWatching() {
 async function handleCatalogFilter() {
   const genre = document.getElementById('genreSelect').value;
   const year = document.getElementById('yearSelect').value;
-  const sortBy = document.getElementById('sortSelect').value;
 
   if (!genre && !year) {
     if (currentActiveType === 'all') resetView();
@@ -1223,7 +1222,8 @@ async function handleCatalogFilter() {
   let mediaType = 'movie';
   if (currentActiveType === 'series' || currentActiveType === 'anime') mediaType = 'tv';
 
-  let url = `https://api.themoviedb.org/3/discover/${mediaType}?api_key=${TMDB_API_KEY}&sort_by=${sortBy}`;
+  // Default sorting na lang sa popularity.desc
+  let url = `https://api.themoviedb.org/3/discover/${mediaType}?api_key=${TMDB_API_KEY}&sort_by=popularity.desc`;
 
   if (genre) url += `&with_genres=${genre}`;
   if (year) {
