@@ -311,6 +311,7 @@
     padding:3px 7px;border-radius:3px;text-transform:uppercase;
   }
   .badge-anime{background:var(--gold);color:#1a1400;}
+  .badge-vivamax{background:var(--ember);color:#fff;}
   .badge-top{background:#222;color:var(--gold);border:1px solid var(--gold);}
 
   /* SKELETON CARD ANIMATION */
@@ -729,6 +730,7 @@
       <li><a href="#" data-filter="movie">Movies</a></li>
       <li><a href="#" data-filter="anime">Anime</a></li>
       <li><a href="#" data-filter="series">TV Series</a></li>
+      <li><a href="#" data-filter="vivamax">Vivamax</a></li>
       <li><a href="#" id="mylist-link">My List</a></li>
     </ul>
   </div>
@@ -783,24 +785,16 @@
 
 <main class="rows">
 
-  
-
   <!-- CATALOG FILTER BAR -->
   <div class="filter-bar" id="filterBar">
     <button class="pill active" data-filter="all">All</button>
     <button class="pill" data-filter="movie">Movies</button>
     <button class="pill" data-filter="anime">Anime</button>
     <button class="pill" data-filter="series">TV Series</button>
+    <button class="pill" data-filter="vivamax">Vivamax</button>
     
     <!-- CATALOG DROPDOWN FILTERS & SORT BY -->
     <div class="catalog-select-group">
-      <!-- <select class="catalog-select" id="sortSelect" onchange="handleSortChange()">
-        <option value="popularity.desc">Sort: Popularity</option>
-        <option value="primary_release_date.desc">Sort: Release Date (Newest)</option>
-        <option value="primary_release_date.asc">Sort: Release Date (Oldest)</option>
-        <option value="vote_average.desc">Sort: Highest Rated</option>
-      </select> -->
-
       <select class="catalog-select" id="genreSelect" onchange="handleCatalogFilter()">
         <option value="">All Genres</option>
         <option value="28">Action</option>
@@ -975,7 +969,126 @@
 <div class="toast" id="toast"></div>
 
 <script>
-/* ================= VIP SYSTEM LOGIC (WITH EXPIRATION & CONFIG) ================= */
+/* ================= VIVAMAX TITLES LIST ================= */
+// Kumpletong talaan ng mga Vivamax / VMX movies at series
+const VIVAMAX_TITLES = [
+  "Paglaki Ko, Gusto Kong Maging Pornstar",
+  "Death of a Girlfriend",
+  "Kaka",
+  "Silab",
+  "Nerisa",
+  "Taya",
+  "69+1",
+  "The Housemaid",
+  "Paraluman",
+  "Sarap Mong Patayin",
+  "House Tour",
+  "Mahjong Nights",
+  "My Husband, My Lover",
+  "Pornstar 2: Pangalawang Putok",
+  "Palitan",
+  "Crush Kong Curly",
+  "Eva",
+  "Siklo",
+  "Hugot",
+  "Moonlight Butterfly",
+  "Reroute",
+  "Boy Bastos",
+  "Silip Sa Apoy",
+  "X-Deal 2",
+  "Island of Desire",
+  "Ex-Hasband: Mga Seryosong Lalaki",
+  "Kaliwaan",
+  "Pusoy",
+  "Breathe Again",
+  "Secrets",
+  "Virgin Forest",
+  "Scorpio Nights 3",
+  "Babu",
+  "Ang Propesor",
+  "Selina's Gold",
+  "Pamasahe",
+  "Us X Her",
+  "Alapaap",
+  "Sitio Diablo",
+  "High on Sex",
+  "Secrets of a Nympho",
+  "Lampas Langit",
+  "Doblado",
+  "Putahe",
+  "Kiskisan",
+  "Bula",
+  "An/Da",
+  "Ungol",
+  "Panibugho",
+  "Nightbird",
+  "Tag-init",
+  "Bela Luna",
+  "Boso Dos",
+  "La Querida",
+  "Suki",
+  "Lagaslas",
+  "Kambal Kama",
+  "Puri",
+  "Akin Ka Tanang",
+  "Home Service",
+  "Sex Hub",
+  "Kahalili",
+  "Bisyo!",
+  "Ganti-Ganti",
+  "Tayuan",
+  "Sugar Baby",
+  "Erotica Manila",
+  "Pantaxa Laiya",
+  "Call Me Alma",
+  "Litro",
+  "Manyakis",
+  "Star Struck",
+  "Hibang",
+  "Litsoneras",
+  "Tuhog",
+  "Kama",
+  "Unang Tikim",
+  "Balinsasayaw",
+  "Room Service",
+  "Salawahan",
+  "Kuskos",
+  "Bedspace",
+  "Lihim",
+  "Pula",
+  "Mahal Kita, Beks",
+  "Stalker",
+  "Kaskasero",
+  "Kapit",
+  "Siping",
+  "Pantaxa",
+  "Adharagang",
+  "House Service",
+  "Karga",
+  "Showroom",
+  "Slay",
+  "Laruan",
+  "L",
+  "PaThien",
+  "Lalaki sa Likod ng Erinya",
+  "Battered Husband",
+  "Pitik",
+  "Biyaya",
+  "Iskandalo",
+  "Boso",
+  "Kardes",
+  "Karnabal",
+  "Laro sa Apoy",
+  "Paupahan",
+  "Sambayan",
+  "Tag-Araw",
+  "Takas",
+  "Tukso",
+  "Uhaw",
+  "Wakas"
+];
+
+/* ================= VIP SYSTEM LOGIC ================= */
 const VIP_KEYS_CONFIG = {
   "ADMIN-KEY-888": { durationMs: Infinity, label: "Permanent Pass" },
   "VIP-USER-30D": { durationMs: 30 * 24 * 60 * 60 * 1000, label: "30-Day Pass" },
@@ -1071,6 +1184,24 @@ document.addEventListener("DOMContentLoaded", () => {
   populateYearSelect();
   renderContinueWatching();
   checkUrlForDirectModal();
+
+  // Navigation Links Filter Event
+  document.querySelectorAll('.nav-links a[data-filter]').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const f = link.dataset.filter;
+      document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+      link.classList.add('active');
+      
+      document.querySelectorAll('.pill').forEach(p => p.classList.toggle('active', p.dataset.filter === f));
+      currentActiveType = f;
+      
+      document.getElementById('genreSelect').value = '';
+      document.getElementById('yearSelect').value = '';
+      
+      applyFilter(f);
+    });
+  });
 });
 
 const TMDB_API_KEY = '847d91d3590d1c54d627043a35cd1a84';
@@ -1096,11 +1227,60 @@ const currentPages = {
   trending: 1,
   anime: 1,
   movie: 1,
-  series: 1
+  series: 1,
+  vivamax: 1
 };
 
 function updateByIdMap() {
   byId = Object.fromEntries(TITLES.map(t => [t.id, t]));
+}
+
+/* ================= VIVAMAX FILTERING LOGIC ================= */
+async function loadVivamaxCatalog() {
+  showToast('Fetching Vivamax Collection...');
+  
+  try {
+    const fetchPromises = VIVAMAX_TITLES.map(async (title) => {
+      const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(title)}&page=1`);
+      const data = await res.json();
+      
+      if (data.results && data.results.length > 0) {
+        return transformTMDB(data.results[0], 'vivamax');
+      }
+      return null;
+    });
+
+    const results = await Promise.all(fetchPromises);
+    const vivamaxResults = results.filter(item => item !== null);
+
+    if (vivamaxResults.length > 0) {
+      vivamaxResults.forEach(item => {
+        if (!byId[item.id]) {
+          TITLES.push(item);
+        }
+      });
+      updateByIdMap();
+
+      document.getElementById('sec-trending').style.display = 'block';
+      document.getElementById('sec-anime').style.display = 'none';
+      document.getElementById('sec-movies').style.display = 'none';
+      document.getElementById('sec-series').style.display = 'none';
+      document.getElementById('load-trending').style.display = 'none';
+
+      document.getElementById('title-trending').textContent = `Vivamax Collection`;
+      document.getElementById('tag-trending').textContent = `${vivamaxResults.length} Titles`;
+
+      const rowTrending = document.getElementById('row-trending');
+      rowTrending.classList.add('grid-mode');
+
+      renderRow('row-trending', vivamaxResults, false);
+      document.getElementById('backBtn').style.display = 'inline-block';
+    } else {
+      showToast('No Vivamax titles found.');
+    }
+  } catch (err) {
+    console.error('Error fetching Vivamax titles:', err);
+  }
 }
 
 /* ================= SKELETON & CARD RENDER LOGIC ================= */
@@ -1117,6 +1297,7 @@ function renderSkeletons() {
 
 function cardHTML(t){
   const badge = t.type === 'anime' ? '<span class="card-badge badge-anime">Anime</span>'
+              : t.type === 'vivamax' ? '<span class="card-badge badge-vivamax">Vivamax</span>'
               : t.match >= 85 ? '<span class="card-badge badge-top">Top Pick</span>' : '';
   
   const posterUrl = t.poster ? `${IMAGE_BASE}${t.poster}` : 'https://via.placeholder.com/500x750?text=No+Poster';
@@ -1204,12 +1385,11 @@ function renderContinueWatching() {
   }
 }
 
-/* ================= CATALOG FILTERING (FIXED) ================= */
+/* ================= CATALOG FILTERING ================= */
 async function handleCatalogFilter() {
   const genre = document.getElementById('genreSelect').value;
   const year = document.getElementById('yearSelect').value;
 
-  // Kapag pinalitan ang dropdown nang walang piniling genre o year, ibalik sa default view
   if (!genre && !year) {
     resetView();
     return;
@@ -1217,7 +1397,6 @@ async function handleCatalogFilter() {
 
   showToast('Filtering Catalog...');
 
-  // Tukuyin kung ano ang isu-search: movie o tv (anime/series)
   let mediaType = 'movie';
   if (currentActiveType === 'series' || currentActiveType === 'anime') {
     mediaType = 'tv';
@@ -1225,20 +1404,13 @@ async function handleCatalogFilter() {
 
   let url = `https://api.themoviedb.org/3/discover/${mediaType}?api_key=${TMDB_API_KEY}&sort_by=popularity.desc`;
 
-  if (genre) {
-    url += `&with_genres=${genre}`;
-  }
-  
-  if (year) {
-    if (mediaType === 'movie') {
-      url += `&primary_release_year=${year}`;
-    } else {
-      url += `&first_air_date_year=${year}`;
-    }
-  }
-
   if (currentActiveType === 'anime') {
     url += `&with_genres=16&with_original_language=ja`;
+  }
+
+  if (genre) url += `&with_genres=${genre}`;
+  if (year) {
+    url += (mediaType === 'movie') ? `&primary_release_year=${year}` : `&first_air_date_year=${year}`;
   }
 
   try {
@@ -1252,7 +1424,6 @@ async function handleCatalogFilter() {
       TITLES.push(...filteredResults);
       updateByIdMap();
 
-      // I-hide muna ang lahat ng sections para malinis ang pagkakadisplay ng grid
       document.getElementById('sec-trending').style.display = 'block';
       document.getElementById('sec-anime').style.display = 'none';
       document.getElementById('sec-movies').style.display = 'none';
@@ -1553,15 +1724,15 @@ function loadEmbedSource() {
   let embedUrl = "";
 
   if (currentServer === 'vidsrc.me') {
-    embedUrl = t.type === 'movie' 
+    embedUrl = (t.type === 'movie' || t.type === 'vivamax')
       ? `https://vidsrc.me/embed/movie?tmdb=${t.tmdbId}`
       : `https://vidsrc.me/embed/tv?tmdb=${t.tmdbId}&season=${currentPlaying.season}&episode=${currentPlaying.episode}`;
   } else if (currentServer === 'vidsrc.cc') {
-    embedUrl = t.type === 'movie' 
+    embedUrl = (t.type === 'movie' || t.type === 'vivamax') 
       ? `https://vidsrc.cc/v2/embed/movie/${t.tmdbId}`
       : `https://vidsrc.cc/v2/embed/tv/${t.tmdbId}/${currentPlaying.season}/${currentPlaying.episode}`;
   } else if (currentServer === 'embedsu') {
-    embedUrl = t.type === 'movie'
+    embedUrl = (t.type === 'movie' || t.type === 'vivamax')
       ? `https://embed.su/embed/movie/${t.tmdbId}`
       : `https://embed.su/embed/tv/${t.tmdbId}/${currentPlaying.season}/${currentPlaying.episode}`;
   }
@@ -1587,7 +1758,7 @@ async function playOfficialTrailer(autoDetected = false) {
   }
 
   try {
-    const endpoint = (t.type === 'movie' || !t.type) 
+    const endpoint = (t.type === 'movie' || t.type === 'vivamax' || !t.type) 
       ? `https://api.themoviedb.org/3/movie/${t.tmdbId}/videos?api_key=${TMDB_API_KEY}`
       : `https://api.themoviedb.org/3/tv/${t.tmdbId}/videos?api_key=${TMDB_API_KEY}`;
 
@@ -1713,6 +1884,11 @@ function transformTMDB(item, category, isTrending = false) {
 
 /* ================= LOAD MORE & PAGINATION ================= */
 async function loadMore(category) {
+  if (category === 'vivamax') {
+    loadVivamaxCatalog();
+    return;
+  }
+
   currentPages[category]++;
   const page = currentPages[category];
   let endpoint = '';
@@ -1733,7 +1909,6 @@ async function loadMore(category) {
     if (data.results) {
       const type = category === 'trending' ? 'movie' : category;
       const newItems = data.results.map(item => transformTMDB(item, type, category === 'trending'));
-      
       TITLES.push(...newItems);
       updateByIdMap();
 
@@ -1750,7 +1925,26 @@ async function loadMore(category) {
   }
 }
 
+function applyFilter(f) {
+  if (f === 'all') { 
+    resetView(); 
+    return; 
+  }
+  
+  if (f === 'vivamax') {
+    loadVivamaxCatalog();
+    return;
+  }
+  
+  showAllSection(f);
+}
+
 function showAllSection(category) {
+  if (category === 'vivamax') {
+    applyFilter('vivamax');
+    return;
+  }
+
   const sections = ['trending', 'anime', 'movies', 'series'];
   const targetSecId = category === 'movie' ? 'movies' : category;
 
@@ -1790,9 +1984,13 @@ function resetView() {
 
   document.querySelectorAll('.see-all-btn').forEach(btn => btn.style.display = 'inline-block');
   document.getElementById('backBtn').style.display = 'none';
+  
   document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
   document.querySelector('.pill[data-filter="all"]').classList.add('active');
   
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  document.querySelector('.nav-links a[data-filter="all"]').classList.add('active');
+
   document.getElementById('genreSelect').value = '';
   document.getElementById('yearSelect').value = '';
   currentActiveType = 'all';
@@ -1805,25 +2003,20 @@ function resetView() {
 }
 
 /* ================= FILTERS & SEARCH DROPDOWN ================= */
-document.querySelectorAll('.pill, .nav-links a[data-filter]').forEach(btn => {
+document.querySelectorAll('.pill').forEach(btn => {
   btn.addEventListener('click', e => {
     e.preventDefault();
     const f = btn.dataset.filter;
     document.querySelectorAll('.pill').forEach(p => p.classList.toggle('active', p.dataset.filter === f));
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.toggle('active', a.dataset.filter === f));
     currentActiveType = f;
     
-    // I-reset ang genre at year kapag nagpalit ng tab
     document.getElementById('genreSelect').value = '';
     document.getElementById('yearSelect').value = '';
     
     applyFilter(f);
   });
 });
-
-function applyFilter(f){
-  if(f === 'all'){ resetView(); return; }
-  showAllSection(f);
-}
 
 /* LIVE SEARCH DROPDOWN ENGINE */
 const searchInput = document.getElementById('searchInput');
@@ -1855,7 +2048,7 @@ async function searchTMDBDropdown(query) {
         .slice(0, 6)
         .map(item => {
           const isAnime = item.genre_ids?.includes(16) && item.original_language === 'ja';
-          const type = item.media_type === 'movie' ? 'movie' : (isAnime ? 'anime' : 'series');
+          let type = item.media_type === 'movie' ? 'movie' : (isAnime ? 'anime' : 'series');
           return transformTMDB(item, type);
         });
 
@@ -1903,7 +2096,7 @@ fetchAllData();
       document.body.appendChild(antiAdblockScript);
     }
   </script>
-<!-- NATIVE BANNER ADSTERRA SECTION -->
+  <!-- NATIVE BANNER ADSTERRA SECTION -->
   <div id="adsterra-banner-container" style="text-align: center; margin: 25px 0 10px 0;">
     <div id="container-e5de4f822ecb95bc3718b0887118fc7c"></div>
   </div>
