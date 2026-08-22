@@ -931,9 +931,12 @@
       <button class="player-btn" onclick="toggleHelpModal()" style="background:rgba(243,179,61,0.2); color:var(--gold);">⚙️ Subtitles Guide</button>
 
       <div class="server-group">
-        <button class="server-btn active" id="btn-vidsrc.me" onclick="switchServer('vidsrc.me')">Server 1</button>
+        <!-- <button class="server-btn active" id="btn-vidsrc.me" onclick="switchServer('vidsrc')">Server 1</button>
         <button class="server-btn" id="btn-vidsrc.cc" onclick="switchServer('vidsrc.cc')">Server 2</button>
-        <button class="server-btn" id="btn-embedsu" onclick="switchServer('embedsu')">Server 3</button>
+        <button class="server-btn" id="btn-embedsu" onclick="switchServer('embedsu')">Server 3</button> -->
+        <button class="server-btn active" id="btn-vidsrc" onclick="switchServer('vidsrc')">Server 1</button>
+        <button class="server-btn" id="btn-2embed" onclick="switchServer('2embed')">Server 2</button>
+        <button class="server-btn" id="btn-superembed" onclick="switchServer('superembed')">Server 3</button>
         <button class="server-btn" id="btn-trailer" onclick="playOfficialTrailer()" style="background: rgba(243, 179, 61, 0.2); color: var(--gold);">🎬 Trailer</button>
       </div>
 
@@ -946,10 +949,21 @@
   </div>
   <iframe 
     id="playerIframe" 
+    src="" 
+    width="100%" 
+    height="100%" 
+    frameborder="0" 
+    allowfullscreen 
+    scrolling="no"
+    referrerpolicy="origin"
+    allow="autoplay; encrypted-media; picture-in-picture">
+</iframe>
+  <!-- <iframe 
+    id="playerIframe" 
     allow="autoplay; encrypted-media; fullscreen" 
     allowfullscreen 
     referrerpolicy="origin">
-  </iframe>
+  </iframe> -->
 </div>
 
 <!-- SUBTITLE HELP MODAL -->
@@ -1221,7 +1235,7 @@ let currentPlaying = {
   totalEpisodesInSeason: 1
 };
 
-let currentServer = 'vidsrc.me';
+let currentServer = 'vidsrc';
 
 const currentPages = {
   trending: 1,
@@ -1666,6 +1680,56 @@ function showToast(msg){
 }
 
 /* ================= STREAMING PLAYER SETUP ================= */
+
+//OLD 08/22/26
+// function openPlayer(id, season = 1, episode = 1, totalEpInSeason = 24){
+//   const t = byId[id];
+//   if(!t) return;
+
+//   currentPlaying = {
+//     id: id,
+//     season: season,
+//     episode: episode,
+//     totalEpisodesInSeason: totalEpInSeason
+//   };
+
+//   saveToContinueWatching(id, season, episode);
+
+//   const isTV = (t.type === 'series' || t.type === 'anime');
+
+//   document.getElementById('playerTitle').textContent = t.title;
+//   document.getElementById('playerSub').textContent = isTV 
+//     ? `Season ${season} — Episode ${episode}` 
+//     : 'Full Movie Stream';
+
+//   const nextBtn = document.getElementById('nextEpBtn');
+//   const prevBtn = document.getElementById('prevEpBtn');
+
+//   if (isTV) {
+//     nextBtn.style.display = 'inline-flex';
+//     prevBtn.style.display = 'inline-flex';
+//   } else {
+//     nextBtn.style.display = 'none';
+//     prevBtn.style.display = 'none';
+//   }
+
+//   const today = new Date().toISOString().split('T')[0];
+//   const releaseDate = t.releaseDate || t.release_date || t.first_air_date;
+
+//   if (releaseDate && releaseDate > today) {
+//     updateServerUI('trailer');
+//     playOfficialTrailer(true);
+//   } else {
+//     const noticeEl = document.getElementById('playerNotice');
+//     if (noticeEl) noticeEl.style.display = 'none';
+//     updateServerUI(currentServer);
+//     loadEmbedSource();
+//   }
+
+//   document.getElementById('playerOverlay').classList.add('open');
+//   closeModal();
+// }
+
 function openPlayer(id, season = 1, episode = 1, totalEpInSeason = 24){
   const t = byId[id];
   if(!t) return;
@@ -1689,13 +1753,31 @@ function openPlayer(id, season = 1, episode = 1, totalEpInSeason = 24){
   const nextBtn = document.getElementById('nextEpBtn');
   const prevBtn = document.getElementById('prevEpBtn');
 
+  // --- BAGONG LOGIC PARA SA NEXT SEASON ---
   if (isTV) {
-    nextBtn.style.display = 'inline-flex';
-    prevBtn.style.display = 'inline-flex';
+    // PREV BUTTON LOGIC
+    if (episode <= 1) {
+      prevBtn.style.display = 'none';
+    } else {
+      prevBtn.style.display = 'inline-flex';
+    }
+
+    // NEXT BUTTON LOGIC (Next Ep vs Next Season)
+    if (episode >= totalEpInSeason) {
+      nextBtn.innerHTML = 'Next Season &rsaquo;';
+      nextBtn.onclick = function() { changeSeason(1); };
+      nextBtn.style.display = 'inline-flex';
+    } else {
+      nextBtn.innerHTML = 'Next Ep &rsaquo;';
+      nextBtn.onclick = function() { changeEpisode(1); };
+      nextBtn.style.display = 'inline-flex';
+    }
   } else {
+    // Itago pareho kapag Movie ang pinapanood
     nextBtn.style.display = 'none';
     prevBtn.style.display = 'none';
   }
+  // ----------------------------------------
 
   const today = new Date().toISOString().split('T')[0];
   const releaseDate = t.releaseDate || t.release_date || t.first_air_date;
@@ -1714,6 +1796,33 @@ function openPlayer(id, season = 1, episode = 1, totalEpInSeason = 24){
   closeModal();
 }
 
+//old
+// function loadEmbedSource() {
+//   const t = byId[currentPlaying.id];
+//   if(!t) return;
+
+//   const noticeEl = document.getElementById('playerNotice');
+//   if (noticeEl) noticeEl.style.display = 'none';
+
+//   let embedUrl = "";
+
+//   if (currentServer === 'vidsrc.me') {
+//     embedUrl = (t.type === 'movie' || t.type === 'vivamax')
+//       ? `https://vidsrc.me/embed/movie?tmdb=${t.tmdbId}`
+//       : `https://vidsrc.me/embed/tv?tmdb=${t.tmdbId}&season=${currentPlaying.season}&episode=${currentPlaying.episode}`;
+//   } else if (currentServer === 'vidsrc.cc') {
+//     embedUrl = (t.type === 'movie' || t.type === 'vivamax') 
+//       ? `https://vidsrc.cc/v2/embed/movie/${t.tmdbId}`
+//       : `https://vidsrc.cc/v2/embed/tv/${t.tmdbId}/${currentPlaying.season}/${currentPlaying.episode}`;
+//   } else if (currentServer === 'embedsu') {
+//     embedUrl = (t.type === 'movie' || t.type === 'vivamax')
+//       ? `https://embed.su/embed/movie/${t.tmdbId}`
+//       : `https://embed.su/embed/tv/${t.tmdbId}/${currentPlaying.season}/${currentPlaying.episode}`;
+//   }
+
+//   document.getElementById('playerIframe').src = embedUrl;
+// }
+
 function loadEmbedSource() {
   const t = byId[currentPlaying.id];
   if(!t) return;
@@ -1722,23 +1831,35 @@ function loadEmbedSource() {
   if (noticeEl) noticeEl.style.display = 'none';
 
   let embedUrl = "";
+  const isMovie = (t.type === 'movie' || t.type === 'vivamax');
+  const s = currentPlaying.season;
+  const e = currentPlaying.episode;
 
-  if (currentServer === 'vidsrc.me') {
-    embedUrl = (t.type === 'movie' || t.type === 'vivamax')
-      ? `https://vidsrc.me/embed/movie?tmdb=${t.tmdbId}`
-      : `https://vidsrc.me/embed/tv?tmdb=${t.tmdbId}&season=${currentPlaying.season}&episode=${currentPlaying.episode}`;
-  } else if (currentServer === 'vidsrc.cc') {
-    embedUrl = (t.type === 'movie' || t.type === 'vivamax') 
-      ? `https://vidsrc.cc/v2/embed/movie/${t.tmdbId}`
-      : `https://vidsrc.cc/v2/embed/tv/${t.tmdbId}/${currentPlaying.season}/${currentPlaying.episode}`;
-  } else if (currentServer === 'embedsu') {
-    embedUrl = (t.type === 'movie' || t.type === 'vivamax')
-      ? `https://embed.su/embed/movie/${t.tmdbId}`
-      : `https://embed.su/embed/tv/${t.tmdbId}/${currentPlaying.season}/${currentPlaying.episode}`;
+  if (currentServer === 'vidsrc') {
+    // Server 1: VidSrc SBS
+    embedUrl = isMovie
+      ? `https://vidsrc.sbs/embed/movie/${t.tmdbId}`
+      : `https://vidsrc.sbs/embed/tv/${t.tmdbId}/${s}/${e}`;
+
+  } else if (currentServer === '2embed') {
+    // Server 2: 2Embed
+    embedUrl = isMovie 
+      ? `https://www.2embed.cc/embed/${t.tmdbId}`
+      : `https://www.2embed.cc/embedtv/${t.tmdbId}&s=${s}&e=${e}`;
+
+  } else if (currentServer === 'superembed') {
+    // Server 3: SuperEmbed / MultiEmbed
+    embedUrl = isMovie
+      ? `https://multiembed.mov/directstream.php?video_id=${t.tmdbId}`
+      : `https://multiembed.mov/directstream.php?video_id=${t.tmdbId}&s=${s}&e=${e}`;
   }
 
-  document.getElementById('playerIframe').src = embedUrl;
+  const iframe = document.getElementById('playerIframe');
+  if (iframe) {
+    iframe.src = embedUrl;
+  }
 }
+
 
 async function playOfficialTrailer(autoDetected = false) {
   if (!currentPlaying.id) return;
@@ -1790,13 +1911,42 @@ function updateServerUI(activeServer) {
   if (activeBtn) activeBtn.classList.add('active');
 }
 
+//OLD FUNCTION CHANGE 08/22/26
+// function changeEpisode(direction) {
+//   const newEp = currentPlaying.episode + direction;
+//   if (newEp < 1) {
+//     showToast('This is the first episode.');
+//     return;
+//   }
+//   openPlayer(currentPlaying.id, currentPlaying.season, newEp, currentPlaying.totalEpisodesInSeason);
+// }
+
+//new
 function changeEpisode(direction) {
   const newEp = currentPlaying.episode + direction;
+
+  // Kung sinusubukang bumalik bago ang Episode 1
   if (newEp < 1) {
     showToast('This is the first episode.');
     return;
   }
+
+  // Kung sinusubukang mag-Next pero last episode na pala
+  if (newEp > currentPlaying.totalEpisodesInSeason) {
+    showToast('This is the last episode of the season.');
+    return;
+  }
+
+  // Kung tama ang episode number, i-play ang susunod/nakaraan
   openPlayer(currentPlaying.id, currentPlaying.season, newEp, currentPlaying.totalEpisodesInSeason);
+}//end changeEpisode
+
+// --- CHANGE SEASON FUNCTION ---
+function changeSeason(direction) {
+  const newSeason = currentPlaying.season + direction;
+  
+  // Awtomatikong magpe-play sa Episode 1 ng susunod na Season
+  openPlayer(currentPlaying.id, newSeason, 1, 24);
 }
 
 function closePlayer(){
